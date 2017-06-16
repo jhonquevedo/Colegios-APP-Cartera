@@ -8,16 +8,17 @@ Imports CarteraPSE.clFunciones
 Imports System.Xml
 Imports System.Data.OleDb
 Imports Excel = Microsoft.Office.Interop.Excel
+
 Public Class Form1
     Public Nombre As String = ""
     Public Nombre2 As String = ""
     Public Carpeta As String = ""
-    'Llenamos los combos con las descripciones necesarias
+
     Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         DateTimePicker3.Value = DateTime.Now.ToString("dd/MM/yyyy")
         ComboBanco.Items.Add("")
         ComboBanco.Items.Add("PSE-Avisor")
-        ComboBanco.Items.Add("Colpatria")
+        ComboBanco.Items.Add("Bancolombia")
         ComboBanco.Items.Add("Caja Social")
         ComboBanco.Items.Add("CDT")
 
@@ -27,7 +28,7 @@ Public Class Form1
 
         Label1.Text = SociedadActual
     End Sub
-    'Vaidacion para habilitar o inhabiliar campos segun entidad seleccionada
+
     Private Sub ComboBanco_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles ComboBanco.SelectedIndexChanged
         TextBox1.Enabled = True
         If ComboBanco.SelectedIndex = 1 Then
@@ -49,10 +50,11 @@ Public Class Form1
             Exit Sub
         End If
 
+        'Dim FechaIni As String = FormatDateTime(DateTimePicker2.Value, DateFormat.ShortDate).Substring(0, 10)
+        'Dim FechaFin As Date = FormatDateTime(DateTimePicker1.Value, DateFormat.ShortDate).Substring(0, 10)
         Dim FechaArchivo As Date = FormatDateTime(DateTimePicker3.Value, DateFormat.ShortDate).Substring(0, 10)
         Dim Consec As String = TextBox1.Text
         Try
-            'Declaracion de variables para ejecucion de las consultas
             Dim Variables As String = "Declare @FechaArchivo As DateTime " & _
                                         "Declare @Valor As Numeric(19,6) " & _
                                         "Declare @Conteo As Int " & _
@@ -68,27 +70,23 @@ Public Class Form1
             Dim CadenaSQL2 As String = ""
             Dim Extension As String = ""
 
-            'Definicion de extensiones, nombres de archivos y consutas a ejecutar
-            'Segun las seleccion por el usuario
             If ComboBanco.SelectedIndex = 1 Then
+                NomArchi = "DET114770897"
+                NomArchi2 = "USUARIOS114770897"
                 Carpeta = "PSE\"
                 If ComboTipo.SelectedIndex = 1 Then
                     CadenaSQL = Variables & My.Resources.CarteraPSE
                     CadenaSQL2 = Variables & My.Resources.UsuariosPSE
-                    NomArchi = "DET37004"
-                    NomArchi2 = "USUARIOS37004"
                 ElseIf ComboTipo.SelectedIndex = 2 Then
                     CadenaSQL = Variables & My.Resources.CarteraPSE1
                     CadenaSQL2 = Variables & My.Resources.UsuariosPSE1
-                    NomArchi = "DET37002"
-                    NomArchi2 = "USUARIOS37002"
                 End If
                 Extension = ".txt"
             ElseIf ComboBanco.SelectedIndex = 2 Then
-                NomArchi = "PAGO"
+                NomArchi = "PROVEEDORES"
                 Carpeta = "Pago Electronico\"
-                CadenaSQL = Variables & My.Resources.Colpatria
-                Extension = ".xml"
+                CadenaSQL = Variables & My.Resources.Bancolombia
+                Extension = ".FIL"
             ElseIf ComboBanco.SelectedIndex = 3 Then
                 NomArchi = "BCS"
                 Carpeta = "Pago Electronico\"
@@ -109,7 +107,6 @@ Public Class Form1
             Dim cnn As New SqlConnection
             Dim cnn2 As New SqlConnection
 
-            'Ejecucion y almacenamiento del resultado en DataGrid
             If ComboBanco.SelectedIndex = 4 Then
 
                 cnn = SetConectionSQL(SociedadActual)
@@ -118,9 +115,9 @@ Public Class Form1
                 Dim ds As New DataSet
                 da.Fill(ds)
                 DataGridView1.DataSource = ds.Tables(0)
-
-                Nombre = NomArchi & Fecha.ToString & TextBox1.Text & Extension
-                Nombre2 = NomArchi2 & Fecha.ToString & TextBox1.Text & Extension
+                
+                Nombre = NomArchi & Fecha.ToString & Extension
+                Nombre2 = NomArchi2 & Fecha.ToString & Extension
                 Filas1 = DataGridView1.RowCount - 1
                 Columnas1 = DataGridView1.ColumnCount - 1
                 Fila_Actual1 = 0
@@ -175,7 +172,6 @@ Public Class Form1
                 Fila_Actual1 = 0
             End If
 
-            'Creacion y almacenamiento de informacion en el archivo
             If DataGridView1.RowCount > 0 Then
 
                 If ComboBanco.SelectedIndex = 4 Then
@@ -225,16 +221,16 @@ Public Class Form1
                         Fila_Actual2 = Fila_Actual2 + 1
                     End While
                     strm2.Close()
-                ElseIf ComboBanco.SelectedIndex = 2 Then
-                    Dim strm1 As New StreamWriter("C:\SAP\" & Carpeta & Nombre)
-                    Texto1 = "<?xml version=""1.0"" encoding=""ISO-8859-1""?>"
-                    While Fila_Actual1 < Filas1
-                        Texto1 = Texto1 + (DataGridView1(0, Fila_Actual1).Value)
-                        Fila_Actual1 = Fila_Actual1 + 1
-                    End While
-                    Texto1 = Replace(Texto1, (">"), (">" & vbCrLf))
-                    strm1.WriteLine(Texto1)
-                    strm1.Close()
+                    'ElseIf ComboBanco.SelectedIndex = 2 Then
+                    '    Dim strm1 As New StreamWriter("C:\SAP\" & Carpeta & Nombre)
+                    '    Texto1 = "<?xml version=""1.0"" encoding=""ISO-8859-1""?>"
+                    '    While Fila_Actual1 < Filas1
+                    '        Texto1 = Texto1 + (DataGridView1(0, Fila_Actual1).Value)
+                    '        Fila_Actual1 = Fila_Actual1 + 1
+                    '    End While
+                    '    Texto1 = Replace(Texto1, (">"), (">" & vbCrLf))
+                    '    strm1.WriteLine(Texto1)
+                    '    strm1.Close()
                 Else
                     Dim strm1 As New StreamWriter("C:\SAP\" & Carpeta & Nombre)
                     While Fila_Actual1 < Filas1
@@ -259,7 +255,6 @@ Public Class Form1
             Exit Sub
         End Try
     End Sub
-    'Funcion para llenar el archivo excel
     Function GridAExcel(ByVal ElGrid As DataGridView, ByVal ElGrid2 As DataGridView, exApp As Microsoft.Office.Interop.Excel.Application _
                             , exLiibro As Microsoft.Office.Interop.Excel.Workbook _
                             , exHoja2 As Microsoft.Office.Interop.Excel.Worksheet, exHoja As Microsoft.Office.Interop.Excel.Worksheet

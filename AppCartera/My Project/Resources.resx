@@ -118,769 +118,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CajaSocial" xml:space="preserve">
-    <value>Set @Valor =
-(
-	Select Sum(LineTotal) As Total from 
-		(
-			Select LineTotal,
-			T1.Cadena1 + Cast(T0.TipoLin As Char(40)) + Cast(UPPER(T0.ItemName) as Char(80)) + '0' + Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-			REPLICATE('0', 18 - DATALENGTH(Replace(Cast(T0.LineTotal as numeric(16,2)),'.',''))) + Replace(Cast(T0.LineTotal as numeric(16,2)),'.','') +
-			T1.Cadena2 As 'Cadena', T0.Alumno, T0.Orden
-			From (
-
-			Select ItemName, Round(Sum(LineTotal),0) LineTotal, Alumno, '00' As TipoLin, 2 Orden 
-			From (
-					Select
-					'COSTOS EDUCATIVOS' + ' - ' + 
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-					A0.DocTotal - A0.PaidToDate 'LineTotal', A0.NumAtCard 'Alumno'
-					From OINV A0
-					Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-					Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-					Inner Join OADM A3 On 1 = 1
-					Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-					Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-					Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-					Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) And 
-					A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) /*And NumAtCard = '491'*/) And A1.TargetType != '14' 
-					Group By A0.DocTotal,A0.PaidToDate, A0.NumAtCard, A0.DocEntry, A4.U_SEINom, A4.U_SEICogn
-
-					Union All
-
-					Select ItemName, Cast(Sum(B0.Saldo)as numeric(16,0))'LineTotal', B0.Alumno 
-					From (
-							Select 
-							'COSTOS EDUCATIVOS' + ' - ' + 
-							Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-							Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') ItemName, 
-							(A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-							From OINV A0
-							Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-							Left join OCRD A2 On A0.CardCode = A2.CardCode
-							Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-							Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-							Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-							Inner Join OADM A6 On 1 = 1
-							Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And 
-							A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) /*And A0.NumAtCard = '491'*/
-							Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A3.U_SEINom, A3.U_SEICogn, A0.DocEntry
-					) B0
-					Group By B0.ItemName, B0.Alumno
-
-					Union All
-
-					Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' From (
-					Select 
-					'COSTOS EDUCATIVOS' + ' - ' + 
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-					Sum(IsNull(A1.Debit,0))- Case When A4.Canceled = 'Y' Then 0 Else IsNull(Sum(A3.SumApplied),0) End 'Saldo', A0.Ref2, A0.TransId
-					From OJDT A0 
-					Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-					Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-					Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-					Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-					Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-					Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-					Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-					Inner Join OCRD A8 ON A2.CardCode = A8.CardCode
-					Left Join OADM A9 On 1 = 1
-					Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */
-					Group By A0.Ref2, A4.Canceled, A0.TransId, A5.U_SEINom, A5.U_SEICogn
-					) C0 
-					Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-					Group By Ref2, ItemName
-			)P0
-			Group By ItemName, Alumno
-
-			Union All
-
-			Select ItemName, Round(LineTotal,0), Alumno,'01' As TipoLin, 3 Orden 
-			From (
-					Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-					From (
-							Select 
-							'SALDO ANTERIOR' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-							From OINV A0
-							Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-							Left join OCRD A2 On A0.CardCode = A2.CardCode
-							Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-							Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-							Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-							Inner Join OADM A6 On 1 = 1
-							Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And
-							A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) /*And A0.NumAtCard = '491'*/
-							Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-							union 
-							Select 
-							'SALDO DEL MES ACTUAL' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-							From OINV A0
-							Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-							Left join OCRD A2 On A0.CardCode = A2.CardCode
-							Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-							Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-							Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-							Inner Join OADM A6 On 1 = 1
-							Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And IsNull(A0.PaidToDate,0) &gt; 0 And
-							A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) /*And A0.NumAtCard = '491'*/
-							Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-					) B0
-					Group By B0.ItemName, B0.Alumno
-
-					Union All
-
-					Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' 
-					From 
-					(
-						Select 
-						'INTERESES DEL MES' ItemName,
-						Sum(IsNull(A1.Debit,0)) - Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-						From OJDT A0 
-						Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-						Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-						Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-						Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-						Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-						Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-						Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-						Inner Join OCRD A8 ON A2.CardCode = A8.CardCode
-						Left Join OADM A9 On 1 = 1
-						Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */
-						Group By A0.Ref2, A4.Canceled, A0.TransId
-					) C0 
-					Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-					Group By Ref2, ItemName
-
-					Union All
-
-					Select * 
-					From 
-					(
-						Select
-						A1.Dscription'ItemName', Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)) 'LineTotal', A0.NumAtCard 'Alumno'
-						From OINV A0
-						Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-						Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-						Inner Join OADM A3 On 1 = 1
-						Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-						Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-						Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc
-						Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And IsNull(A0.PaidToDate,0) = 0
-						And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) /*And NumAtCard = '491'*/) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' 
-					)A0 Where A0.LineTotal &gt; 0
-			)P0
-			)T0
-			Left Join(
-						Select
-						'2' +
-						REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-						REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
-						CASE WHEN CHARINDEX('-', IsNull(A2.LicTradNum,'')) &gt; 0 THEN Cast(LEFT(IsNull(A2.LicTradNum,''), CHARINDEX('-', IsNull(A2.LicTradNum,''))-1) As char(80)) ELSE Cast(IsNull(A2.LicTradNum,'') As char(80)) END +
-						Cast(IsNull(J1.DocEntry,'') As char(80)) +
-						Cast(IsNull(A0.NumAtCard,'') As Char(80)) As Cadena1,
-						REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-						REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-						REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-						REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-						REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
-						REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-						REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-						REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena2', A0.NumAtCard--, A0.DocEntry
-						From OINV A0
-						Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-						Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-						Inner Join OADM A3 On 1 = 1
-						Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-						Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-						Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-						Inner Join (Select DISTINCT	MAX(A0.DocEntry) as DocEntry,		
-						 A0.NumAtCard
-						From OINV A0
-						Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-						Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-						Inner Join OADM A3 On 1 = 1
-						Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-						Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-						Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code			
-						Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' 
-						And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt;= Month(GetDate()) /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' --and A4.Code = '100'			
-						Group by A0.NumAtCard
-						 )	J1 ON J1.NumAtCard = A0.NumAtCard 
-						Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' 
-						And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt;= Month(GetDate()) /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' 
-						Group By A3.U_EtyCode, A10.Name, A2.LicTradNum, J1.DocEntry, A0.NumAtCard
-					) T1 On T0.Alumno = T1.NumAtCard
-			) B0 Where Cadena &lt;&gt;''
-)
-
-Set @Conteo = 
-(
-	Select C0.Filas From 
-	(
-		Select Count(*) As Filas from 
-		(
-			Select 
-			T1.Cadena1 + Cast(T0.TipoLin As Char(40)) + Cast(UPPER(T0.ItemName) as Char(80)) + '0' + Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-			REPLICATE('0', 18 - DATALENGTH(Replace(Cast(T0.LineTotal as numeric(16,2)),'.',''))) + Replace(Cast(T0.LineTotal as numeric(16,2)),'.','') +
-			T1.Cadena2 As 'Cadena', T0.Alumno, T0.Orden
-			From (
-
-			Select ItemName, Round(Sum(LineTotal),0) 'LineTotal', Alumno, '00' As TipoLin, 2 Orden 
-			From (
-					Select
-					'COSTOS EDUCATIVOS' + ' - ' + 
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-					A0.DocTotal - A0.PaidToDate 'LineTotal', A0.NumAtCard 'Alumno'
-					From OINV A0
-					Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-					Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-					Inner Join OADM A3 On 1 = 1
-					Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-					Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-					Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-					Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) And 
-					A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) /*And NumAtCard = '491'*/) And A1.TargetType != '14' 
-					Group By A0.DocTotal,A0.PaidToDate, A0.NumAtCard, A0.DocEntry, A4.U_SEINom, A4.U_SEICogn
-
-					Union All
-
-					Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-					From (
-							Select 
-							'COSTOS EDUCATIVOS' + ' - ' + 
-							Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-							Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') ItemName, 
-							(A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-							From OINV A0
-							Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-							Left join OCRD A2 On A0.CardCode = A2.CardCode
-							Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-							Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-							Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-							Inner Join OADM A6 On 1 = 1
-							Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And 
-							A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) /*And A0.NumAtCard = '491'*/
-							Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A3.U_SEINom, A3.U_SEICogn, A0.DocEntry
-					) B0
-					Group By B0.ItemName, B0.Alumno
-
-					Union All
-
-					Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' From (
-					Select 
-					'COSTOS EDUCATIVOS' + ' - ' + 
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-					Sum(IsNull(A1.Debit,0))- Case When A4.Canceled = 'Y' Then 0 Else IsNull(Sum(A3.SumApplied),0) End 'Saldo', A0.Ref2, A0.TransId
-					From OJDT A0 
-					Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-					Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-					Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-					Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-					Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-					Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-					Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-					Inner Join OCRD A8 ON A2.CardCode = A8.CardCode
-					Left Join OADM A9 On 1 = 1
-					Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */
-					Group By A0.Ref2, A4.Canceled, A0.TransId, A5.U_SEINom, A5.U_SEICogn
-					) C0 
-					Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-					Group By Ref2, ItemName
-			)P0
-			Group By ItemName, Alumno
-
-			Union All
-
-			Select ItemName, Round(LineTotal,0) 'LineTotal', Alumno,'01' As TipoLin, 3 Orden 
-			From (
-					Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-					From (
-							Select 
-							'SALDO ANTERIOR' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-							From OINV A0
-							Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-							Left join OCRD A2 On A0.CardCode = A2.CardCode
-							Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-							Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-							Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-							Inner Join OADM A6 On 1 = 1
-							Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And
-							A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) /*And A0.NumAtCard = '491'*/
-							Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-							union
-							Select 
-							'SALDO DEL MES ACTUAL' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-							From OINV A0
-							Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-							Left join OCRD A2 On A0.CardCode = A2.CardCode
-							Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-							Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-							Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-							Inner Join OADM A6 On 1 = 1
-							Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And IsNull(A0.PaidToDate,0) &gt; 0 And 
-							A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) /*And A0.NumAtCard = '491'*/
-							Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-					) B0
-					Group By B0.ItemName, B0.Alumno
-
-					Union All
-
-					Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' 
-					From 
-					(
-						Select 
-						'INTERESES DEL MES' ItemName,
-						Sum(IsNull(A1.Debit,0)) - Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-						From OJDT A0 
-						Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-						Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-						Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-						Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-						Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-						Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-						Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-						Inner Join OCRD A8 ON A2.CardCode = A8.CardCode
-						Left Join OADM A9 On 1 = 1
-						Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */
-						Group By A0.Ref2, A4.Canceled, A0.TransId
-					) C0 
-					Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-					Group By Ref2, ItemName
-
-					Union All
-
-					Select * 
-					From 
-					(
-						Select
-						A1.Dscription'ItemName', Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)) 'LineTotal', A0.NumAtCard 'Alumno'
-						From OINV A0
-						Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-						Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-						Inner Join OADM A3 On 1 = 1
-						Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-						Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-						Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc
-						Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And IsNull(A0.PaidToDate,0) = 0
-						And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) /*And NumAtCard = '491'*/) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' 
-					)A0 Where A0.LineTotal &gt; 0
-)P0
-)T0
-Left Join(
-			Select
-			'2' +
-			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-			REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
-			CASE WHEN CHARINDEX('-', IsNull(A2.LicTradNum,'')) &gt; 0 THEN Cast(LEFT(IsNull(A2.LicTradNum,''), CHARINDEX('-', IsNull(A2.LicTradNum,''))-1) As char(80)) ELSE Cast(IsNull(A2.LicTradNum,'') As char(80)) END +
-			Cast(IsNull(J1.DocEntry,'') As char(80)) +
-			Cast(IsNull(A0.NumAtCard,'') As Char(80)) As Cadena1,
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena2', A0.NumAtCard--, A0.DocEntry
-			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-			Inner Join OADM A3 On 1 = 1
-			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-			Inner Join (Select DISTINCT	MAX(A0.DocEntry) as DocEntry,		
-						 A0.NumAtCard
-						From OINV A0
-						Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-						Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-						Inner Join OADM A3 On 1 = 1
-						Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-						Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-						Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code			
-						Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' 
-						And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt;= Month(GetDate()) /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' --and A4.Code = '100'			
-						Group by A0.NumAtCard
-						 )	J1 ON J1.NumAtCard = A0.NumAtCard 
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' 
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt;= Month(GetDate()) /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' 
-			Group By A3.U_EtyCode, A10.Name, A2.LicTradNum, J1.DocEntry, A0.NumAtCard
-		) T1 On T0.Alumno = T1.NumAtCard
-		) B0 Where Cadena &lt;&gt;''
-	) C0
-)
-
-/*Cabecera Archivo*/
-Select Cadena From (
-Select C0.* From (
-Select
-'1' +
-Convert(VARCHAR(8), GetDate(), 112) +
-REPLICATE('0', 6 - DATALENGTH(LTRIM(@Conteo))) + LTRIM(@Conteo) +
-REPLICATE('0', 18 - DATALENGTH(Replace(Cast(@Valor as numeric(16,2)),'.',''))) + Replace(Cast(@Valor as numeric(16,2)),'.','') +
-@Consec +
-Space(527) As Cadena, 0 As Alumno, 1 As Orden
-)C0
-
-Union All
-
-Select 
-T1.Cadena1 + Cast(T0.TipoLin As Char(40)) + Cast(UPPER(T0.ItemName) as Char(80)) + '0' + Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-REPLICATE('0', 18 - DATALENGTH(Replace(Cast(T0.LineTotal as numeric(16,2)),'.',''))) + Replace(Cast(T0.LineTotal as numeric(16,2)),'.','') +
-T1.Cadena2 As 'Cadena', T0.Alumno, T0.Orden
-From (
-
-Select ItemName, Round(Sum(LineTotal),0) LineTotal, Alumno, '00' As TipoLin, 2 Orden 
-From (
-		Select
-		'COSTOS EDUCATIVOS' + ' - ' + 
-		Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-		Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-		A0.DocTotal - A0.PaidToDate 'LineTotal', A0.NumAtCard 'Alumno'
-		From OINV A0
-		Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-		Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-		Inner Join OADM A3 On 1 = 1
-		Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-		Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-		Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-		Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) And 
-		A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) /*And NumAtCard = '491'*/) And A1.TargetType != '14' 
-		Group By A0.DocTotal, A0.PaidToDate, A0.NumAtCard, A0.DocEntry, A4.U_SEINom, A4.U_SEICogn
-
-		Union All
-
-		Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-		From (
-				Select 
-				'COSTOS EDUCATIVOS' + ' - ' + 
-				Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-				Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') ItemName, 
-				(A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-				From OINV A0
-				Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-				Left join OCRD A2 On A0.CardCode = A2.CardCode
-				Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-				Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-				Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-				Inner Join OADM A6 On 1 = 1
-				Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And 
-				A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) /*And A0.NumAtCard = '491'*/
-				Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A3.U_SEINom, A3.U_SEICogn, A0.DocEntry
-		) B0
-		Group By B0.ItemName, B0.Alumno
-
-		Union All
-
-		Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' From (
-		Select 
-		'COSTOS EDUCATIVOS' + ' - ' + 
-		Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-		Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-		Sum(IsNull(A1.Debit,0))- Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-		From OJDT A0 
-		Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-		Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-		Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-		Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-		Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-		Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-		Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-		Inner Join OCRD A8 ON A2.CardCode = A8.CardCode
-		Left Join OADM A9 On 1 = 1
-		Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */
-		Group By A0.Ref2, A4.Canceled, A0.TransId, A5.U_SEINom, A5.U_SEICogn
-		) C0 
-		Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-		Group By Ref2, ItemName
-)P0
-Group By ItemName, Alumno
-
-Union All
-
-Select ItemName, Round(LineTotal,0)'LineTotal', Alumno,'01' As TipoLin, 3 Orden 
-From (
-		Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-		From (
-				Select 
-				'SALDO ANTERIOR' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-				From OINV A0
-				Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-				Left join OCRD A2 On A0.CardCode = A2.CardCode
-				Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-				Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-				Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-				Inner Join OADM A6 On 1 = 1
-				Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And
-				A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) /*And A0.NumAtCard = '491'*/
-				Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-				Union
-				Select 
-				'SALDO DEL MES ACTUAL' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-				From OINV A0
-				Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-				Left join OCRD A2 On A0.CardCode = A2.CardCode
-				Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-				Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-				Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-				Inner Join OADM A6 On 1 = 1
-				Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And IsNull(A0.PaidToDate,0) &gt; 0 And
-				A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()))
-				Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-		) B0
-		Group By B0.ItemName, B0.Alumno
-
-		Union All
-
-		Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' 
-		From 
-		(
-			Select 
-			'INTERESES DEL MES' ItemName,
-			Sum(IsNull(A1.Debit,0)) - Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-			From OJDT A0 
-			Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-			Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-			Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-			Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-			Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-			Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-			Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-			Inner Join OCRD A8 ON A2.CardCode = A8.CardCode
-			Left Join OADM A9 On 1 = 1
-			Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */
-			Group By A0.Ref2, A4.Canceled, A0.TransId
-		) C0 
-		Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-		Group By Ref2, ItemName
-
-		Union All
-
-		Select * 
-		From 
-		(
-			Select
-			A1.Dscription'ItemName', Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)) 'LineTotal', A0.NumAtCard 'Alumno'
-			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-			Inner Join OADM A3 On 1 = 1
-			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-			Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And IsNull(A0.PaidToDate,0) = 0
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) /*And NumAtCard = '491'*/) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' 
-		)A0 Where A0.LineTotal &gt; 0
-)P0
-)T0
-Left Join(
-			Select 
-			'2' +
-			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-			REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
-			CASE WHEN CHARINDEX('-', IsNull(A2.LicTradNum,'')) &gt; 0 THEN Cast(LEFT(IsNull(A2.LicTradNum,''), CHARINDEX('-', IsNull(A2.LicTradNum,''))-1) As char(80)) ELSE Cast(IsNull(A2.LicTradNum,'') As char(80)) END +
-			Cast(IsNull(J1.DocEntry,'') As char(80)) +
-			Cast(IsNull(A0.NumAtCard,'') As Char(80)) As Cadena1,
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena2', A0.NumAtCard--, A0.DocEntry
-			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-			Inner Join OADM A3 On 1 = 1
-			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-			Inner Join (Select DISTINCT	MAX(A0.DocEntry) as DocEntry,		
-			 A0.NumAtCard
-			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-			Inner Join OADM A3 On 1 = 1
-			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code			
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) 
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt;= Month(GetDate()) /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' --and A4.Code = '100'			
-			Group by A0.NumAtCard
-			 )	J1 ON J1.NumAtCard = A0.NumAtCard 
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) 
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt; = Month(GetDate()) /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' 
-			Group By A3.U_EtyCode, A10.Name, A2.LicTradNum, J1.DocEntry, A0.NumAtCard			
-		) T1 On T0.Alumno = T1.NumAtCard
-) B0 Where Cadena &lt;&gt;'' Order By Alumno, Orden</value>
+    <value>Select
+'6' + 
+Case when A2.DflIBAN = '01' Then '22' When A2.DflIBAN = '02' Then '32' When A2.DflIBAN = '03' Then '23' When A2.DflIBAN = '04' Then '33' Else '00' End +
+REPLICATE('0', 12 - DATALENGTH(Replace(Cast(sum(A1.SumApplied) As Numeric(19,2)),'.',''))) + Replace(Cast(sum(A1.SumApplied) As Numeric(19,2)),'.','') +
+Cast(IsNull(A2.DflAccount,'') As Char(17)) +
+'000010320' +
+Cast(Replace(IsNull(A2.LicTradNum,''), '-', '') As Char(15)) +
+Cast(A2.CardName As Char (22))+
+Cast('V' As Char (2)) +
+Space(13) +
+Cast('' As Char (10)) +
+Cast(A1.DocEntry As Char (30)) +
+Space(27)
+From OVPM A0
+Left join VPM2 A1 On A0.DocEntry = A1.DocNum
+Left Join OCRD A2 On A0.CardCode = A2.CardCode
+Left Join OPYM A3 On A0.PayMth = A3.PayMethCod
+Left Join DSC1 A5 On A0.TrsfrAcct = A5.GLAccount
+Left Join [@BPCO_TD] A6 On A2.U_BPCO_TDC = A6.Code
+Where A0.DocDate = @FechaArchivo And IsNull(A3.PayMethCod,'') Like '%Caja%' And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0
+Group By A2.DflAccount, A2.LicTradNum, A2.CardName, A5.AcctName, A2.DflIBAN, A1.DocEntry</value>
   </data>
   <data name="CarteraPSE" xml:space="preserve">
     <value>Set @Valor =
 (
-	Select Sum(LineTotal) As Total from 
-		(
-			Select LineTotal,
-			T1.Cadena1 + Cast(T0.TipoLin As Char(40)) + Cast(UPPER(T0.ItemName) as Char(80)) + '0' + Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-			REPLICATE('0', 18 - DATALENGTH(Replace(Cast(T0.LineTotal as numeric(16,2)),'.',''))) + Replace(Cast(T0.LineTotal as numeric(16,2)),'.','') +
-			T1.Cadena2 As 'Cadena', T0.Alumno, T0.Orden
+	Select SUM(CAST(SUBSTRING(P0.Cadena,449,8) as numeric(16,2)))  As Total from 
+		(			
+			
+			Select C0.* from (
+			/*Cabecera Factura 00*/
+			Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+			CASE WHEN CHARINDEX('-', P0.NumAtCard) &gt; 0 THEN LEFT(P0.NumAtCard, CHARINDEX('-', P0.NumAtCard)-1) ELSE P0.NumAtCard  END as NumAtCard ,0 DocEntry, 2 As Orden
 			From (
-
-			Select ItemName, Round(Sum(LineTotal),0) LineTotal, Alumno, '00' As TipoLin, 2 Orden 
-			From (
-					Select
-						'COSTOS EDUCATIVOS' + ' - ' + 
-						Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-						Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-						A0.DocTotal - A0.PaidToDate 'LineTotal', A0.NumAtCard 'Alumno'
-						From OINV A0
-						Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-						Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-						Inner Join OADM A3 On 1 = 1
-						Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-						Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-						Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-						Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) And 
-						A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())  and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/) And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015
-						Group By A0.DocTotal, A0.PaidToDate, A0.NumAtCard, A0.DocEntry, A4.U_SEINom, A4.U_SEICogn
-
-						Union All
-
-						Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-						From (
-								Select 
-								'COSTOS EDUCATIVOS' + ' - ' + 
-								Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-								Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') ItemName, 
-								(A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-								From OINV A0
-								Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-								Left join OCRD A2 On A0.CardCode = A2.CardCode
-								Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-								Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-								Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-								Inner Join OADM A6 On 1 = 1
-								Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And 
-								A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015) /*And A0.NumAtCard = '491'*/ and YEAR(A0.DocDate) &gt; 2015
-								Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A3.U_SEINom, A3.U_SEICogn, A0.DocEntry
-						) B0
-						Group By B0.ItemName, B0.Alumno
-
-						Union All
-
-						Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' From (
-						Select 
-						'COSTOS EDUCATIVOS' + ' - ' + 
-						Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-						Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-						Sum(IsNull(A1.Debit,0))- Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-						From OJDT A0 
-						Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-						Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-						Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-						Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-						Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-						Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-						Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-						Inner Join OCRD A8 ON A2.CardCode = A8.CardCode AND A8.CardCode = A1.ShortName
-						Left Join OADM A9 On 1 = 1
-						Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */ and YEAR(A2.DocDate) &gt; 2015
-						Group By A0.Ref2, A4.Canceled, A0.TransId, A5.U_SEINom, A5.U_SEICogn
-						) C0 
-						Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-						Group By Ref2, ItemName
-			)P0
-			Group By ItemName, Alumno
-
-			Union All
-
-			Select ItemName, Round(LineTotal,0), Alumno,'01' As TipoLin, 3 Orden 
-			From (
-					Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-					From (
-							Select 
-								'SALDO ANTERIOR' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-								From OINV A0
-								Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-								Left join OCRD A2 On A0.CardCode = A2.CardCode
-								Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-								Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-								Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-								Inner Join OADM A6 On 1 = 1
-								Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And
-								A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015) /*And A0.NumAtCard = '491'*/ and YEAR(A0.DocDate) &gt; 2015
-								Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-								Union all
-								Select 
-								'SALDO DEL MES ACTUAL' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-								From OINV A0
-								Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-								Left join OCRD A2 On A0.CardCode = A2.CardCode
-								Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-								Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-								Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-								Inner Join OADM A6 On 1 = 1
-								Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And IsNull(A0.PaidToDate,0) &gt; 0 And
-								A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015) and YEAR(A0.DocDate) &gt; 2015
-								Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-						) B0
-						Group By B0.ItemName, B0.Alumno
-
-						Union All
-
-						Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' 
-						From 
-						(
-							Select 
-							'INTERESES DEL MES' ItemName,
-							Sum(IsNull(A1.Debit,0)) - Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-							From OJDT A0 
-							Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-							--Inner join ocrd ll on a1.ShortName=ll.CardCode 
-							Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-							Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-							Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-							Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-							Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-							Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-							Inner Join OCRD A8 ON A2.CardCode = A8.CardCode AND A8.CardCode = A1.ShortName
-							Left Join OADM A9 On 1 = 1
-							Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '100191'*/  and YEAR(A2.DocDate) &gt; 2015
-							Group By A0.Ref2, A4.Canceled, A0.TransId
-						) C0 
-						Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-						Group By Ref2, ItemName
-
-						Union All
-
-						Select * 
-						From 
-						(
-							Select distinct
-							A1.Dscription'ItemName', Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)) 'LineTotal', A0.NumAtCard 'Alumno'
-							From OINV A0
-							Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-							Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-							Inner Join OADM A3 On 1 = 1
-							Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-							Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-							Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc
-							Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And IsNull(A0.PaidToDate,0) = 0
-							And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015
-						)A0 Where A0.LineTotal &gt; 0
-			)P0
-			)T0
-			Left Join(
-			Select 
+			Select
 			'2' +
 			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-			REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
-			CASE WHEN CHARINDEX('-', IsNull(A2.LicTradNum,'')) &gt; 0 THEN Cast(LEFT(IsNull(A2.LicTradNum,''), CHARINDEX('-', IsNull(A2.LicTradNum,''))-1) As char(80)) ELSE Cast(IsNull(A2.LicTradNum,'') As char(80)) END +
-			Cast(IsNull(J1.DocEntry,'') As char(80)) +
-			Cast(IsNull(A0.NumAtCard,'') As Char(80)) As Cadena1,
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			--Cast(A0.DocEntry As char(80)) +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('00' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+			CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) as INT) As Valor ,
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
@@ -888,32 +173,206 @@ Left Join(
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena2', A0.NumAtCard--, A0.DocEntry
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard END as NumAtCard, A0.DocEntry, 2 As Orden
 			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
 			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
 			Inner Join OADM A3 On 1 = 1
 			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
 			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
 			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-			Inner Join (Select DISTINCT	MAX(A0.DocEntry) as DocEntry,		
-			 A0.NumAtCard
+			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' AND A0.CardCode != 'C9999'
+			Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A0.DocTotal, A0.PaidToDate
+
+			Union 
+
+
+			Select
+			'2' +
+			REPLICATE('0', 34 - Len(IsNull('1021',''))) + IsNull('1021','') + 
+			CAST(REPLICATE('0', 30 - Len(IsNull('100',''))) + IsNull('100','') as char (36)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('00' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadean1, 
+			CAST(IsNull(A8.BalDueDeb ,0) as INT) As Valor,
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) ELSE A0.Ref2 END as NumAtCard, 0 as DocEntry, 2 As Orden
+			From  OJDT A0
+			Inner Join OADM A3 On 1 = 1
+			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.Ref2 ,'') = A4.Code
+			--Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+			Left Join JDT1 A8 On A0.TransId = A8.TransId
+			Inner Join OCRD A2 ON A8.ShortName  = A2.CardCode
+			Where A8.BalDueDeb &gt; 0 And A0.TransCode = 'INT' 
+			Group By A2.LicTradNum, A3.U_EtyCode, A0.Ref2, A8.Debit, A8.BalDueDeb , A4.U_SEINom 
+			) P0 
+			Group By P0.Cadena1, P0.cadena, P0.NumAtCard
+
+			--/*Lineas*/
+			--/*Conceptos Factura 01*/
+			Union All
+			Select 
+			'2' +
+			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('01' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A6.ItemName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
+			--REPLICATE('0', 16 - DATALENGTH(Replace(Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as INT),'.',''))) + Replace(Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as INT),'.','') + '00' +
+			REPLICATE('0', 16 - DATALENGTH(Replace(Cast(A1.LineTotal+ ISNULL((SELECT  T0.LineTotal FROM INV1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.',''))) + Replace(Cast(A1.LineTotal+ISNULL((SELECT  T0.LineTotal FROM INV1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.','') + '00' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry , 3 As Orden
 			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
+			Inner Join INV1 A1 ON A0.DocEntry = A1.DocEntry
+			Inner Join OITM A6 ON A1.ItemCode = A6.ItemCode 
+			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+			Inner Join OADM A3 On 1 = 1
+			Left Join [@SEI_ALUMNOS] A4 On A1.U_SEICAlum = A4.Code
+			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+			Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc AND A11.U_SEIFeUlF = A0.DocDate 
+			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' And A1.LineTotal &gt; 0 AND A0.CardCode != 'C9999' AND A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) AND  (A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100) &gt; 0 AND IsNull(A0.PaidToDate,0) = 0
+
+			UNION ALL
+			/*Saldo Del Mes */
+
+			Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+			P0.NumAtCard, 0 DocEntry, 5 As Orden
+			From (
+			Select
+			'2' +
+			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('01' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull('SALDO MES ACTUAL',''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+			CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) AS INT) As Valor ,
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry, 3 As Orden
+			From OINV A0
 			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
 			Inner Join OADM A3 On 1 = 1
 			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
 			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code			
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) 
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt;= Month(GetDate()) and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015 --and A4.Code = '100'			
-			Group by A0.NumAtCard
-			 )	J1 ON J1.NumAtCard = A0.NumAtCard 
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) 
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt; = Month(GetDate()) and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015
-			Group By A3.U_EtyCode, A10.Name, A2.LicTradNum, J1.DocEntry, A0.NumAtCard				
-					) T1 On T0.Alumno = T1.NumAtCard
-			) B0 Where Cadena &lt;&gt;''
+			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' AND A0.CardCode != 'C9999' AND A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) AND IsNull(A0.PaidToDate,0) &gt; 0
+			Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A0.DocTotal, A0.PaidToDate
+
+			) P0 
+			Group By P0.Cadena1, P0.cadena, P0.NumAtCard
+
+
+			UNION ALL
+			/*Saldo Anterior */
+			Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+			P0.NumAtCard, 0 DocEntry, 5 As Orden
+			From (
+			Select
+			'2' +
+			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('01' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull('SALDO ANTERIOR',''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+			CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) AS INT) As Valor ,
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry, 5 As Orden
+			From OINV A0
+			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+			Inner Join OADM A3 On 1 = 1
+			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
+			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' AND A0.CardCode != 'C9999' AND A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()))
+			Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A0.DocTotal, A0.PaidToDate
+
+			Union 
+
+			Select
+			'2' +
+			REPLICATE('0', 34 - Len(IsNull('1021',''))) + IsNull('1021','') + 
+			CAST(REPLICATE('0', 30 - Len(IsNull('100',''))) + IsNull('100','') as char (36)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('01' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull('SALDO ANTERIOR',''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadean1, 
+			CAST(IsNull(A8.BalDueDeb ,0) AS INT) As Valor,
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) ELSE A0.Ref2 END as NumAtCard, 0 as DocEntry, 5 As Orden
+			From  OJDT A0
+			Inner Join OADM A3 On 1 = 1
+			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.Ref2 ,'') = A4.Code
+			--Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+			Left Join JDT1 A8 On A0.TransId = A8.TransId
+			Inner Join OCRD A2 ON A8.ShortName  = A2.CardCode
+			Where A8.BalDueDeb &gt; 0 And A0.TransCode = 'INT' 
+			Group By A2.LicTradNum, A3.U_EtyCode, A0.Ref2, A8.Debit, A8.BalDueDeb 
+			) P0 
+			Group By P0.Cadena1, P0.cadena, P0.NumAtCard
+
+
+			/*Lineas*/
+			)C0
+
+		)P0
 )
 
 Set @Conteo = 
@@ -922,164 +381,24 @@ Set @Conteo =
 	(
 		Select Count(*) As Filas from 
 		(
-			Select 
-			T1.Cadena1 + Cast(T0.TipoLin As Char(40)) + Cast(UPPER(T0.ItemName) as Char(80)) + '0' + Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-			REPLICATE('0', 18 - DATALENGTH(Replace(Cast(T0.LineTotal as numeric(16,2)),'.',''))) + Replace(Cast(T0.LineTotal as numeric(16,2)),'.','') +
-			T1.Cadena2 As 'Cadena', T0.Alumno, T0.Orden
+			Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+			CASE WHEN CHARINDEX('-', P0.NumAtCard) &gt; 0 THEN LEFT(P0.NumAtCard, CHARINDEX('-', P0.NumAtCard)-1) ELSE P0.NumAtCard  END as NumAtCard ,0 DocEntry, 2 As Orden
 			From (
-
-			Select ItemName, Round(Sum(LineTotal),0) 'LineTotal', Alumno, '00' As TipoLin, 2 Orden 
-			From (
-					Select
-					'COSTOS EDUCATIVOS' + ' - ' + 
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-					A0.DocTotal - A0.PaidToDate 'LineTotal', A0.NumAtCard 'Alumno'
-					From OINV A0
-					Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-					Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-					Inner Join OADM A3 On 1 = 1
-					Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-					Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-					Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-					Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) And 
-					A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())  and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/) And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015
-					Group By A0.DocTotal, A0.PaidToDate, A0.NumAtCard, A0.DocEntry, A4.U_SEINom, A4.U_SEICogn
-
-					Union All
-
-					Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-					From (
-							Select 
-							'COSTOS EDUCATIVOS' + ' - ' + 
-							Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-							Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') ItemName, 
-							(A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-							From OINV A0
-							Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-							Left join OCRD A2 On A0.CardCode = A2.CardCode
-							Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-							Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-							Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-							Inner Join OADM A6 On 1 = 1
-							Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And 
-							A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015) /*And A0.NumAtCard = '491'*/ and YEAR(A0.DocDate) &gt; 2015
-							Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A3.U_SEINom, A3.U_SEICogn, A0.DocEntry
-					) B0
-					Group By B0.ItemName, B0.Alumno
-
-					Union All
-
-					Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' From (
-					Select 
-					'COSTOS EDUCATIVOS' + ' - ' + 
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-					Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-					Sum(IsNull(A1.Debit,0))- Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-					From OJDT A0 
-					Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-					Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-					Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-					Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-					Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-					Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-					Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-					Inner Join OCRD A8 ON A2.CardCode = A8.CardCode AND A8.CardCode = A1.ShortName
-					Left Join OADM A9 On 1 = 1
-					Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */ and YEAR(A2.DocDate) &gt; 2015
-					Group By A0.Ref2, A4.Canceled, A0.TransId, A5.U_SEINom, A5.U_SEICogn
-					) C0 
-					Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-					Group By Ref2, ItemName
-			)P0
-			Group By ItemName, Alumno
-
-			Union All
-
-			Select ItemName, Round(LineTotal,0) 'LineTotal', Alumno,'01' As TipoLin, 3 Orden 
-			From (
-					Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-					From (
-							Select 
-								'SALDO ANTERIOR' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-								From OINV A0
-								Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-								Left join OCRD A2 On A0.CardCode = A2.CardCode
-								Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-								Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-								Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-								Inner Join OADM A6 On 1 = 1
-								Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And
-								A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015) /*And A0.NumAtCard = '491'*/ and YEAR(A0.DocDate) &gt; 2015
-								Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-								Union all
-								Select 
-								'SALDO DEL MES ACTUAL' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-								From OINV A0
-								Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-								Left join OCRD A2 On A0.CardCode = A2.CardCode
-								Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-								Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-								Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-								Inner Join OADM A6 On 1 = 1
-								Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And IsNull(A0.PaidToDate,0) &gt; 0 And
-								A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015) and YEAR(A0.DocDate) &gt; 2015
-								Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-						) B0
-						Group By B0.ItemName, B0.Alumno
-
-						Union All
-
-						Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' 
-						From 
-						(
-							Select 
-							'INTERESES DEL MES' ItemName,
-							Sum(IsNull(A1.Debit,0)) - Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-							From OJDT A0 
-							Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-							--Inner join ocrd ll on a1.ShortName=ll.CardCode 
-							Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-							Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-							Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-							Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-							Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-							Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-							Inner Join OCRD A8 ON A2.CardCode = A8.CardCode AND A8.CardCode = A1.ShortName
-							Left Join OADM A9 On 1 = 1
-							Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '100191'*/  and YEAR(A2.DocDate) &gt; 2015
-							Group By A0.Ref2, A4.Canceled, A0.TransId
-						) C0 
-						Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-						Group By Ref2, ItemName
-
-						Union All
-
-						Select * 
-						From 
-						(
-							Select distinct
-							A1.Dscription'ItemName', Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)) 'LineTotal', A0.NumAtCard 'Alumno'
-							From OINV A0
-							Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-							Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-							Inner Join OADM A3 On 1 = 1
-							Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-							Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-							Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc
-							Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And IsNull(A0.PaidToDate,0) = 0
-							And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015
-						)A0 Where A0.LineTotal &gt; 0
-)P0
-)T0
-Left Join(
-			Select 
+			Select
 			'2' +
 			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-			REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
-			CASE WHEN CHARINDEX('-', IsNull(A2.LicTradNum,'')) &gt; 0 THEN Cast(LEFT(IsNull(A2.LicTradNum,''), CHARINDEX('-', IsNull(A2.LicTradNum,''))-1) As char(80)) ELSE Cast(IsNull(A2.LicTradNum,'') As char(80)) END +
-			Cast(IsNull(J1.DocEntry,'') As char(80)) +
-			Cast(IsNull(A0.NumAtCard,'') As Char(80)) As Cadena1,
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			--Cast(A0.DocEntry As char(80)) +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('00' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+			CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) as INT) As Valor ,
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
@@ -1087,37 +406,212 @@ Left Join(
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena2', A0.NumAtCard--, A0.DocEntry
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard END as NumAtCard, A0.DocEntry, 2 As Orden
 			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
 			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
 			Inner Join OADM A3 On 1 = 1
 			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
 			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
 			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-			Inner Join (Select DISTINCT	MAX(A0.DocEntry) as DocEntry,		
-			 A0.NumAtCard
+			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' AND A0.CardCode != 'C9999'
+			Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A0.DocTotal, A0.PaidToDate
+
+			Union 
+
+
+			Select
+			'2' +
+			REPLICATE('0', 34 - Len(IsNull('1021',''))) + IsNull('1021','') + 
+			CAST(REPLICATE('0', 30 - Len(IsNull('100',''))) + IsNull('100','') as char (36)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('00' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadean1, 
+			CAST(IsNull(A8.BalDueDeb ,0) as INT) As Valor,
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) ELSE A0.Ref2 END as NumAtCard, 0 as DocEntry, 2 As Orden
+			From  OJDT A0
+			Inner Join OADM A3 On 1 = 1
+			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.Ref2 ,'') = A4.Code
+			--Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+			Left Join JDT1 A8 On A0.TransId = A8.TransId
+			Inner Join OCRD A2 ON A8.ShortName  = A2.CardCode
+			Where A8.BalDueDeb &gt; 0 And A0.TransCode = 'INT' 
+			Group By A2.LicTradNum, A3.U_EtyCode, A0.Ref2, A8.Debit, A8.BalDueDeb , A4.U_SEINom 
+			) P0 
+			Group By P0.Cadena1, P0.cadena, P0.NumAtCard
+
+			--/*Lineas*/
+			--/*Conceptos Factura 01*/
+			Union All
+			Select 
+			'2' +
+			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('01' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A6.ItemName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
+			--REPLICATE('0', 16 - DATALENGTH(Replace(Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as INT),'.',''))) + Replace(Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as INT),'.','') + '00' +
+			REPLICATE('0', 16 - DATALENGTH(Replace(Cast(A1.LineTotal+ ISNULL((SELECT  T0.LineTotal FROM INV1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.',''))) + Replace(Cast(A1.LineTotal+ISNULL((SELECT  T0.LineTotal FROM INV1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.','') + '00' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry , 3 As Orden
 			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
+			Inner Join INV1 A1 ON A0.DocEntry = A1.DocEntry
+			Inner Join OITM A6 ON A1.ItemCode = A6.ItemCode 
+			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+			Inner Join OADM A3 On 1 = 1
+			Left Join [@SEI_ALUMNOS] A4 On A1.U_SEICAlum = A4.Code
+			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+			Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc AND A11.U_SEIFeUlF = A0.DocDate 
+			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' And A1.LineTotal &gt; 0 AND A0.CardCode != 'C9999' AND A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) AND  (A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100) &gt; 0 AND IsNull(A0.PaidToDate,0) = 0
+
+			UNION ALL
+			/*Saldo Del Mes */
+
+			Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+			P0.NumAtCard, 0 DocEntry, 5 As Orden
+			From (
+			Select
+			'2' +
+			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('01' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull('SALDO MES ACTUAL',''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+			CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) AS INT) As Valor ,
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry, 3 As Orden
+			From OINV A0
 			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
 			Inner Join OADM A3 On 1 = 1
 			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
 			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code			
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) 
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt;= Month(GetDate()) and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015 --and A4.Code = '100'			
-			Group by A0.NumAtCard
-			 )	J1 ON J1.NumAtCard = A0.NumAtCard 
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) 
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt; = Month(GetDate()) and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015
-			Group By A3.U_EtyCode, A10.Name, A2.LicTradNum, J1.DocEntry, A0.NumAtCard			
-		) T1 On T0.Alumno = T1.NumAtCard
-		) B0 Where Cadena &lt;&gt;''
+			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' AND A0.CardCode != 'C9999' AND A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) AND IsNull(A0.PaidToDate,0) &gt; 0
+			Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A0.DocTotal, A0.PaidToDate
+
+			) P0 
+			Group By P0.Cadena1, P0.cadena, P0.NumAtCard
+
+
+			UNION ALL
+			/*Saldo Anterior */
+			Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+			P0.NumAtCard, 0 DocEntry, 5 As Orden
+			From (
+			Select
+			'2' +
+			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('01' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull('SALDO ANTERIOR',''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+			CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) AS INT) As Valor ,
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry, 5 As Orden
+			From OINV A0
+			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+			Inner Join OADM A3 On 1 = 1
+			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
+			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' AND A0.CardCode != 'C9999' AND A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()))
+			Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A0.DocTotal, A0.PaidToDate
+
+			Union 
+
+			Select
+			'2' +
+			REPLICATE('0', 34 - Len(IsNull('1021',''))) + IsNull('1021','') + 
+			CAST(REPLICATE('0', 30 - Len(IsNull('100',''))) + IsNull('100','') as char (36)) + 
+			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			Cast('01' As Char(40)) + 
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull('SALDO ANTERIOR',''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			'0' +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadean1, 
+			CAST(IsNull(A8.BalDueDeb ,0) AS INT) As Valor,
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) ELSE A0.Ref2 END as NumAtCard, 0 as DocEntry, 5 As Orden
+			From  OJDT A0
+			Inner Join OADM A3 On 1 = 1
+			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.Ref2 ,'') = A4.Code
+			--Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+			Left Join JDT1 A8 On A0.TransId = A8.TransId
+			Inner Join OCRD A2 ON A8.ShortName  = A2.CardCode
+			Where A8.BalDueDeb &gt; 0 And A0.TransCode = 'INT' 
+			Group By A2.LicTradNum, A3.U_EtyCode, A0.Ref2, A8.Debit, A8.BalDueDeb 
+			) P0 
+			Group By P0.Cadena1, P0.cadena, P0.NumAtCard
+
+		)P0
 	) C0
 )
 
+
+----------------------------------------------------------------------ARCHIVO-------------------------------------------------------------------------------------------------
+
+
+
 /*Cabecera Archivo*/
-Select Cadena From (
+Select T0.Cadena From (
 Select C0.* From (
 Select
 '1' +
@@ -1125,202 +619,242 @@ Convert(VARCHAR(8), GetDate(), 112) +
 REPLICATE('0', 6 - DATALENGTH(LTRIM(@Conteo))) + LTRIM(@Conteo) +
 REPLICATE('0', 18 - DATALENGTH(Replace(Cast(@Valor as numeric(16,2)),'.',''))) + Replace(Cast(@Valor as numeric(16,2)),'.','') +
 @Consec +
-Space(527) As Cadena, 0 As Alumno, 1 As Orden
+Space(527) As Cadena, 0 As NumAtCard, 0 As DocEntry, 1 As Orden
 )C0
 
 Union All
 
-Select 
-T1.Cadena1 + Cast(T0.TipoLin As Char(40)) + Cast(UPPER(T0.ItemName) as Char(80)) + '0' + Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-REPLICATE('0', 18 - DATALENGTH(Replace(Cast(T0.LineTotal as numeric(16,2)),'.',''))) + Replace(Cast(T0.LineTotal as numeric(16,2)),'.','') +
-T1.Cadena2 As 'Cadena', T0.Alumno, T0.Orden
+Select C0.* from (
+/*Cabecera Factura 00*/
+Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+CASE WHEN CHARINDEX('-', P0.NumAtCard) &gt; 0 THEN LEFT(P0.NumAtCard, CHARINDEX('-', P0.NumAtCard)-1) ELSE P0.NumAtCard  END as NumAtCard ,0 DocEntry, 2 As Orden
 From (
+Select
+'2' +
+REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+--Cast(A0.DocEntry As char(80)) +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+Cast('00' As Char(40)) + 
+Cast(UPPER(
+Replace(Replace(Replace(Replace(Replace(Replace(IsNull(CONCAT (A4.U_SEINom,' ',A4.U_SEICogn),''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+'0' +
+Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) as INT) As Valor ,
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard END as NumAtCard, A0.DocEntry, 2 As Orden
+From OINV A0
+Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+Inner Join OADM A3 On 1 = 1
+Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
+Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' AND A0.CardCode != 'C9999'
+--and A4.Code = '2014156-0'
+Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A0.DocTotal, A0.PaidToDate,A4.U_SEICogn
 
-Select ItemName, Round(Sum(LineTotal),0) LineTotal, Alumno, '00' As TipoLin, 2 Orden 
-From (
-		Select
-		'COSTOS EDUCATIVOS' + ' - ' + 
-		Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-		Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-		A0.DocTotal - A0.PaidToDate 'LineTotal', A0.NumAtCard 'Alumno'
-		From OINV A0
-		Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-		Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-		Inner Join OADM A3 On 1 = 1
-		Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-		Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-		Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-		Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) And 
-		A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())  and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/) And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015
-		Group By A0.DocTotal, A0.PaidToDate, A0.NumAtCard, A0.DocEntry, A4.U_SEINom, A4.U_SEICogn
+Union 
 
-		Union All
 
-		Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-		From (
-				Select 
-				'COSTOS EDUCATIVOS' + ' - ' + 
-				Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-				Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A3.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') ItemName, 
-				(A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-				From OINV A0
-				Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-				Left join OCRD A2 On A0.CardCode = A2.CardCode
-				Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-				Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-				Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-				Inner Join OADM A6 On 1 = 1
-				Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And 
-				A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015) /*And A0.NumAtCard = '491'*/ and YEAR(A0.DocDate) &gt; 2015
-				Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A3.U_SEINom, A3.U_SEICogn, A0.DocEntry
-		) B0
-		Group By B0.ItemName, B0.Alumno
+Select
+'2' +
+REPLICATE('0', 34 - Len(IsNull('1021',''))) + IsNull('1021','') + 
+CAST(REPLICATE('0', 30 - Len(IsNull('100',''))) + IsNull('100','') as char (36)) + 
+CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+Cast('00' As Char(40)) + 
+Cast(UPPER(
+Replace(Replace(Replace(Replace(Replace(Replace(IsNull(CONCAT (A4.U_SEINom,' ',A4.U_SEICogn),''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+'0' +
+Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadean1, 
+CAST(IsNull(A8.BalDueDeb ,0) as INT) As Valor,
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) ELSE A0.Ref2 END as NumAtCard, 0 as DocEntry, 2 As Orden
+From  OJDT A0
+Inner Join OADM A3 On 1 = 1
+Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.Ref2 ,'') = A4.Code
+--Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+Left Join JDT1 A8 On A0.TransId = A8.TransId
+Inner Join OCRD A2 ON A8.ShortName  = A2.CardCode
+Where A8.BalDueDeb &gt; 0 And A0.TransCode = 'INT' 
+--and A4.Code = '2014156-0'
+Group By A2.LicTradNum, A3.U_EtyCode, A0.Ref2, A8.Debit, A8.BalDueDeb , A4.U_SEINom,A4.U_SEICogn
+) P0 
+Group By P0.Cadena1, P0.cadena, P0.NumAtCard
 
-		Union All
-
-		Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' From (
-		Select 
-		'COSTOS EDUCATIVOS' + ' - ' + 
-		Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-		Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A5.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')  ItemName, 
-		Sum(IsNull(A1.Debit,0))- Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-		From OJDT A0 
-		Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-		Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-		Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-		Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-		Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-		Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-		Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-		Inner Join OCRD A8 ON A2.CardCode = A8.CardCode AND A8.CardCode = A1.ShortName
-		Left Join OADM A9 On 1 = 1
-		Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */ and YEAR(A2.DocDate) &gt; 2015
-		Group By A0.Ref2, A4.Canceled, A0.TransId, A5.U_SEINom, A5.U_SEICogn
-		) C0 
-		Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-		Group By Ref2, ItemName
-)P0
-Group By ItemName, Alumno
-
+--/*Lineas*/
+--/*Conceptos Factura 01*/
 Union All
+Select 
+'2' +
+REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+Cast('01' As Char(40)) + 
+Cast(UPPER(
+Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A6.ItemName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+'0' +
+Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
+REPLICATE('0', 16 - DATALENGTH(Replace(Cast(A1.LineTotal+ ISNULL((SELECT  T0.LineTotal FROM INV1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.',''))) + Replace(Cast(A1.LineTotal+ISNULL((SELECT  T0.LineTotal FROM INV1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.','') + '00' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry , 3 As Orden
+From OINV A0
+Inner Join INV1 A1 ON A0.DocEntry = A1.DocEntry
+Inner Join OITM A6 ON A1.ItemCode = A6.ItemCode 
+Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+Inner Join OADM A3 On 1 = 1
+Left Join [@SEI_ALUMNOS] A4 On A1.U_SEICAlum = A4.Code
+Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc AND A11.U_SEIFeUlF = A0.DocDate 
+Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' And A1.LineTotal &gt; 0 AND A0.CardCode != 'C9999' AND A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) AND  (A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100) &gt; 0 AND IsNull(A0.PaidToDate,0) = 0
+--and A4.Code = '2014156-0'
 
-Select ItemName, Round(LineTotal,0)'LineTotal', Alumno,'01' As TipoLin, 3 Orden 
+UNION ALL
+/*Saldo Del Mes */
+
+Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+P0.NumAtCard, 0 DocEntry, 5 As Orden
 From (
-		Select ItemName, Sum(B0.Saldo)'LineTotal', B0.Alumno 
-		From (
-				Select 
-				'SALDO ANTERIOR' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-				From OINV A0
-				Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-				Left join OCRD A2 On A0.CardCode = A2.CardCode
-				Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-				Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-				Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-				Inner Join OADM A6 On 1 = 1
-				Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And Year(A0.DocDate)  =  Year(GetDate()) And
-				A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015) /*And A0.NumAtCard = '491'*/ and YEAR(A0.DocDate) &gt; 2015
-				Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-				Union all
-				Select 
-				'SALDO DEL MES ACTUAL' ItemName, (A0.DocTotal-IsNull(A0.PaidToDate,0)) 'Saldo', A0.NumAtCard 'Alumno'
-				From OINV A0
-				Left Join INV1 A1 On A0.DocEntry = A1.DocEntry
-				Left join OCRD A2 On A0.CardCode = A2.CardCode
-				Left Join [@SEI_ALUMNOS] A3 On IsNull(A0.NumAtCard,'')= A3.Code
-				Left Join [@SEI_CURSOS] A4 On A3.U_SEICurso = A4.Code
-				Left Join [@SEI_SRVCODE] A5 On A0.U_SEI_FACTU = A5.Code
-				Inner Join OADM A6 On 1 = 1
-				Where A0.DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And A1.TargetType != '14' And IsNull(A0.PaidToDate,0) &gt; 0 And
-				A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015) and YEAR(A0.DocDate) &gt; 2015
-				Group By A0.NumAtCard, A0.DocTotal, A0.PaidToDate, A0.DocEntry
-		) B0
-		Group By B0.ItemName, B0.Alumno
+Select
+'2' +
+REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+Cast('01' As Char(40)) + 
+Cast(UPPER(
+Replace(Replace(Replace(Replace(Replace(Replace(IsNull('SALDO MES ACTUAL',''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+'0' +
+Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) AS INT) As Valor ,
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry, 3 As Orden
+From OINV A0
+Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+Inner Join OADM A3 On 1 = 1
+Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
+Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' AND A0.CardCode != 'C9999' AND A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate())) AND IsNull(A0.PaidToDate,0) &gt; 0
+--and A4.Code = '2014156-0'
+Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A0.DocTotal, A0.PaidToDate
 
-		Union All
+) P0 
+Group By P0.Cadena1, P0.cadena, P0.NumAtCard
 
-		Select ItemName, Sum(Saldo) 'LineTotal', Ref2'Alumno' 
-		From 
-		(
-			Select 
-			'INTERESES DEL MES' ItemName,
-			Sum(IsNull(A1.Debit,0)) - Case When A4.Canceled = 'Y' Then 0 Else (Sum(IsNull(A1.Debit,0)) - IsNull(Sum(A1.BalDueDeb),0)) End 'Saldo', A0.Ref2, A0.TransId
-			From OJDT A0 
-			Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-			--Inner join ocrd ll on a1.ShortName=ll.CardCode 
-			Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-			Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-			Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-			Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-			Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-			Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-			Inner Join OCRD A8 ON A2.CardCode = A8.CardCode AND A8.CardCode = A1.ShortName
-			Left Join OADM A9 On 1 = 1
-			Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '100191'*/  and YEAR(A2.DocDate) &gt; 2015
-			Group By A0.Ref2, A4.Canceled, A0.TransId
-		) C0 
-		Where Saldo &gt; 0 And TransId Not In (Select StornoToTr From OJDT Where IsNull(StornoToTr,'') &lt;&gt; '')
-		Group By Ref2, ItemName
 
-		Union All
+UNION ALL
+/*Saldo Anterior */
+Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+P0.NumAtCard, 0 DocEntry, 5 As Orden
+From (
+Select
+'2' +
+REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
+CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
+CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+Cast('01' As Char(40)) + 
+Cast(UPPER(
+Replace(Replace(Replace(Replace(Replace(Replace(IsNull('SALDO ANTERIOR',''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+'0' +
+Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) AS INT) As Valor ,
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry, 5 As Orden
+From OINV A0
+Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+Inner Join OADM A3 On 1 = 1
+Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
+Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
+Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' AND A0.CardCode != 'C9999' AND A0.DocEntry Not In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()))
+--and A4.Code = '2014156-0'
+Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A0.DocTotal, A0.PaidToDate
 
-		Select * 
-		From 
-		(
-			Select distinct
-			A1.Dscription'ItemName', Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)) 'LineTotal', A0.NumAtCard 'Alumno'
-			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-			Inner Join OADM A3 On 1 = 1
-			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-			Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And IsNull(A0.PaidToDate,0) = 0
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015
-		)A0 Where A0.LineTotal &gt; 0
-)P0
-)T0
-Left Join(
-			Select 
-			'2' +
-			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-			REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
-			CASE WHEN CHARINDEX('-', IsNull(A2.LicTradNum,'')) &gt; 0 THEN Cast(LEFT(IsNull(A2.LicTradNum,''), CHARINDEX('-', IsNull(A2.LicTradNum,''))-1) As char(80)) ELSE Cast(IsNull(A2.LicTradNum,'') As char(80)) END +
-			Cast(IsNull(J1.DocEntry,'') As char(80)) +
-			Cast(IsNull(A0.NumAtCard,'') As Char(80)) As Cadena1,
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena2', A0.NumAtCard--, A0.DocEntry
-			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-			Inner Join OADM A3 On 1 = 1
-			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-			Inner Join (Select DISTINCT	MAX(A0.DocEntry) as DocEntry,		
-			 A0.NumAtCard
-			From OINV A0
-			Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
-			Inner Join OADM A3 On 1 = 1
-			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
-			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code			
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) 
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt;= Month(GetDate()) and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015 --and A4.Code = '100'			
-			Group by A0.NumAtCard
-			 )	J1 ON J1.NumAtCard = A0.NumAtCard 
-			Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 1 And A0.U_SEI_FACTU = '1' And Year(A0.DocDate)  =  Year(GetDate()) 
-			And A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) &lt; = Month(GetDate()) and YEAR(DocDate) &gt; 2015 /*And NumAtCard = '491'*/ Group By NumAtCard, DocDate, DocEntry ) /*And A0.NumAtCard = '491'*/ And A1.TargetType != '14' and YEAR(A0.DocDate) &gt; 2015
-			Group By A3.U_EtyCode, A10.Name, A2.LicTradNum, J1.DocEntry, A0.NumAtCard			
-		) T1 On T0.Alumno = T1.NumAtCard
-) B0 Where Cadena &lt;&gt;'' Order By Alumno, Orden</value>
+Union 
+
+Select
+'2' +
+REPLICATE('0', 34 - Len(IsNull('1021',''))) + IsNull('1021','') + 
+CAST(REPLICATE('0', 30 - Len(IsNull('100',''))) + IsNull('100','') as char (36)) + 
+CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN Cast(LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) As char(80)) ELSE Cast(A0.Ref2 As char(80)) END +
+--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+Cast('01' As Char(40)) + 
+Cast(UPPER(
+Replace(Replace(Replace(Replace(Replace(Replace(IsNull('SALDO ANTERIOR',''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+'0' +
+Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadean1, 
+CAST(IsNull(A8.BalDueDeb ,0) AS INT) As Valor,
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.Ref2) &gt; 0 THEN LEFT(A0.Ref2, CHARINDEX('-', A0.Ref2)-1) ELSE A0.Ref2 END as NumAtCard, 0 as DocEntry, 5 As Orden
+From  OJDT A0
+Inner Join OADM A3 On 1 = 1
+Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.Ref2 ,'') = A4.Code
+--Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+Left Join JDT1 A8 On A0.TransId = A8.TransId
+Inner Join OCRD A2 ON A8.ShortName  = A2.CardCode
+Where A8.BalDueDeb &gt; 0 And A0.TransCode = 'INT' 
+--and A4.Code = '2014156-0'
+Group By A2.LicTradNum, A3.U_EtyCode, A0.Ref2, A8.Debit, A8.BalDueDeb 
+) P0 
+Group By P0.Cadena1, P0.cadena, P0.NumAtCard
+
+
+/*Lineas*/
+)C0
+)T0 Order By T0.NumAtCard,  T0.Orden</value>
   </data>
   <data name="CDT" xml:space="preserve">
     <value>Select 'CDU026NUMO'As 'NO TOCAR','CDU026NIDE' As 'NO TOCAR','CDU026NCLI'As 'NO TOCAR','CDU026TICC' As 'NO TOCAR','CDU026NRCC' As 'NO TOCAR',
@@ -1345,11 +879,11 @@ Left Join OCRD A2 On A0.CardCode = A2.CardCode
 Left Join OPYM A3 On A0.PayMth = A3.PayMethCod
 Left Join DSC1 A5 On A0.TrsfrAcct = A5.GLAccount
 Left Join [@BPCO_TD] A6 On A2.U_BPCO_TDC = A6.Code
-Where A0.DocDate = @FechaArchivo And (IsNull(A3.PayMethCod,'') Like '%CDT%' Or A0.U_METOPAGO = 'CDT') And Cast(IsNull(A2.BankCode,'') As Int) = '19'
+Where A0.DocDate = @FechaArchivo And IsNull(A3.PayMethCod,'') Like '%CDT%' And Cast(IsNull(A2.BankCode,'') As Int) = '19'
 Group By A2.LicTradNum, A2.CardName, A2.BankCode, A2.DflIBAN, A2.DflAccount</value>
   </data>
   <data name="Colpatria" xml:space="preserve">
-    <value>Set @Conteo =
+    <value>Set @Conteo = 
 (
 	Select C0.Filas From 
 	(
@@ -1368,7 +902,7 @@ Group By A2.LicTradNum, A2.CardName, A2.BankCode, A2.DflIBAN, A2.DflAccount</val
 			'000000' As NUMERO_CONTROL_PAGO,
 			REPLICATE('0', 17 - Len(Replace(Cast(A1.WtAppld As Numeric(15,2)),'.',''))) + Replace(Cast(A1.WtAppld As Numeric(15,2)),'.','') As VALOR_RETENCION ,
 			REPLICATE('0', 17 - Len(Replace(Cast(A1.ExpVatSum As Numeric(15,2)),'.',''))) + Replace(Cast(A1.ExpVatSum As Numeric(15,2)),'.','') As VALOR_IVA,
-			REPLACE(CONVERT(CHAR(10), A0.DocDate, 103), '/', '') As FECHA_PAGO,
+			Cast(Convert(VARCHAR(8), A0.DocDate, 112) As char(8)) As FECHA_PAGO,
 			'0000000000' As NUMERO_NOTA_DEBITO,
 			'000000000000000' As VALOR_NOTA_DEBITO,
 			REPLICATE('0', 8 - Len(IsNull(Cast(Replace(A2.BankCode,'-','0') As Nvarchar(500)),'0'))) + IsNull(Cast(Replace(A2.BankCode,'-','0') As Nvarchar(500)),'0') As CODIGO_BANCO,
@@ -1382,15 +916,14 @@ Group By A2.LicTradNum, A2.CardName, A2.BankCode, A2.DflIBAN, A2.DflAccount</val
 				When A6.U_TicpoDocICA = 'CE' Then 'E'
 				Else A6.U_TicpoDocICA
 			End TIPO_DOCUMENTO,
-			Cast('' As Char (80)) As ADENDA,
-			'' As MOTIVO_RECHAZO
+			Cast('' As Char (80)) As ADENDA
 			From OVPM A0
 			Left join VPM2 A1 On A0.DocEntry = A1.DocNum
 			Left Join OCRD A2 On A0.CardCode = A2.CardCode
 			Left Join OPYM A3 On A0.PayMth = A3.PayMethCod
 			Left Join DSC1 A5 On A0.TrsfrAcct = A5.GLAccount
 			Left Join [@BPCO_TD] A6 On A2.U_BPCO_TDC = A6.Code
-			Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And (A3.PayMethCod Like '%Trans%' Or A0.U_METOPAGO = 'Trans')
+			Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And A3.PayMethCod Like '%Trans%'
 		)P0
 	) C0
 )
@@ -1399,25 +932,19 @@ Select (
 Select
 '00001'REGISTRO,
 '01' As TIPO_REGISTRO,
---REPLACE(CONVERT(CHAR(10), @FechaArchivo, 103), '/', '') As FECHA_RECIBO,
+Convert(VARCHAR(8), @FechaArchivo, 112) As FECHA_RECIBO,
 REPLICATE('0', 11 - Len(Replace(IsNull(A4.TaxIdNum,''), '-', ''))) + Replace(IsNull(A4.TaxIdNum,''), '-', '') As NIT_CLIENTE,
-Cast(IsNull(A3.SwiftNum,'') As Char(10)) As CLAVE,
---REPLICATE('0', 6 - Len(LTRIM(@Conteo+2))) + LTRIM(@Conteo+2) As REGISTROS_ENVIADOS,
-'2' As TIPO_CARGO,
+Cast(IsNull(A3.ControlKey,'') As Char(10)) As CLAVE,
+REPLICATE('0', 6 - Len(LTRIM(@Conteo))) + LTRIM(@Conteo) As REGISTROS_ENVIADOS,
 REPLICATE('0', 4 - Len(IsNull(A3.Street,''))) + IsNull(A3.Street,'') As OFICINA_PAGO,
-REPLICATE('0', 12 - Len(IsNull(A1.DflAccount,''))) + IsNull(A1.DflAccount,'') As NUMERO_CUENTA,
-'0' As RESULTADO_VALIDACION,
-'0' As NUMERO_LOTE,
-'' As MOTIVO_RECHAZO,
-'0' As ID_PROCESO, 
-'' As USUARIO
+REPLICATE('0', 12 - Len(IsNull(A3.Account,''))) + IsNull(A3.Account,'') As NUMERO_CUENTA,
+Space(142) As ESPACIOLONG
 From OVPM A0
 Left Join OPYM A1 On A0.PayMth = A1.PayMethCod
 Left Join ODSC A2 On A1.BnkDflt = A2.BankCode
 Left Join DSC1 A3 On A2.DfltActKey = A3.AbsEntry
 Left join OADM A4 On 1 = 1
-Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And (A1.PayMethCod Like '%Trans%' Or A0.U_METOPAGO = 'Trans')
-Group By A3.Street, A1.DflAccount, A4.TaxIdNum, A3.SwiftNum
+Group By A3.Street, A3.Account, A4.TaxIdNum, A3.ControlKey
 FOR XML RAW ('ENCABEZADO') , TYPE
 ),
 (
@@ -1434,7 +961,7 @@ Cast(A1.DocEntry As Char (10)) As NUMERO_FACTURA,
 '000000' As NUMERO_CONTROL_PAGO,
 REPLICATE('0', 17 - Len(Replace(Cast(A1.WtAppld As Numeric(15,2)),'.',''))) + Replace(Cast(A1.WtAppld As Numeric(15,2)),'.','') As VALOR_RETENCION ,
 REPLICATE('0', 17 - Len(Replace(Cast(A1.ExpVatSum As Numeric(15,2)),'.',''))) + Replace(Cast(A1.ExpVatSum As Numeric(15,2)),'.','') As VALOR_IVA,
-REPLACE(CONVERT(CHAR(10), A0.DocDate, 103), '/', '') As FECHA_PAGO,
+Cast(Convert(VARCHAR(8), A0.DocDate, 112) As char(8)) As FECHA_PAGO,
 '0000000000' As NUMERO_NOTA_DEBITO,
 '000000000000000' As VALOR_NOTA_DEBITO,
 REPLICATE('0', 8 - Len(IsNull(Cast(Replace(A2.BankCode,'-','0') As Nvarchar(500)),'0'))) + IsNull(Cast(Replace(A2.BankCode,'-','0') As Nvarchar(500)),'0') As CODIGO_BANCO,
@@ -1448,29 +975,22 @@ Case
 	When A6.U_TicpoDocICA = 'CE' Then 'E'
 	Else A6.U_TicpoDocICA
 End TIPO_DOCUMENTO,
-Cast('' As Char (80)) As ADENDA,
-'' As MOTIVO_RECHAZO
+Cast('' As Char (80)) As ADENDA
 From OVPM A0
 Left join VPM2 A1 On A0.DocEntry = A1.DocNum
 Left Join OCRD A2 On A0.CardCode = A2.CardCode
 Left Join OPYM A3 On A0.PayMth = A3.PayMethCod
 Left Join DSC1 A5 On A0.TrsfrAcct = A5.GLAccount
 Left Join [@BPCO_TD] A6 On A2.U_BPCO_TDC = A6.Code
-Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And (A3.PayMethCod Like '%Trans%' Or A0.U_METOPAGO = 'Trans')
+Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And A3.PayMethCod Like '%Trans%'
 FOR XML RAW ('REGISTRO') , TYPE
 ),
 (
 Select
 REPLICATE('0', 5 - Len(Cast(@Conteo+2 As nvarchar(40)))) + Cast(@Conteo+2 As nvarchar(40)) As REGISTRO,
+--@Conteo+2 As TOTAL_REGISTRO, 
 '03' As TIPO_REGISTRO,
 REPLICATE('0', 5 - Len(Cast(@Conteo+2 As nvarchar(40)))) + Cast(@Conteo+2 As nvarchar(40)) As NUMERO_REGISTRO
-From OVPM A0
-Left Join OPYM A1 On A0.PayMth = A1.PayMethCod
-Left Join ODSC A2 On A1.BnkDflt = A2.BankCode
-Left Join DSC1 A3 On A2.DfltActKey = A3.AbsEntry
-Left join OADM A4 On 1 = 1
-Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And (A1.PayMethCod Like '%Trans%' Or A0.U_METOPAGO = 'Trans')
-Group By A3.Street, A1.DflAccount, A4.TaxIdNum, A3.SwiftNum
 FOR XML RAW ('TOTAL') , TYPE
 )
 FOR XML PATH ('ROOT')</value>
@@ -1498,7 +1018,7 @@ Left Join OCRD A2 On A0.CardCode = A2.CardCode
 Left Join OPYM A3 On A0.PayMth = A3.PayMethCod
 Left Join DSC1 A5 On A0.TrsfrAcct = A5.GLAccount
 Left Join [@BPCO_TD] A6 On A2.U_BPCO_TDC = A6.Code
-Where A0.DocDate = @FechaArchivo And (IsNull(A3.PayMethCod,'') Like '%CDT%' Or A0.U_METOPAGO = 'CDT') And Cast(IsNull(A2.BankCode,'') As Int) != '19'
+Where A0.DocDate = @FechaArchivo And IsNull(A3.PayMethCod,'') Like '%CDT%' And Cast(IsNull(A2.BankCode,'') As Int) != '19'
 Group By A2.LicTradNum, A2.CardName, A2.BankCode, A2.DflIBAN, A2.DflAccount</value>
   </data>
   <data name="UsuariosPSE1" xml:space="preserve">
@@ -1511,35 +1031,51 @@ Cast(IsNull(A0.NumAtCard,'') As Char(35)) +
 Cast(UPPER(Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A0.CardName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u ') ) as Char(50)) +
 Space(50) As Cadena
 From ORDR A0
-Inner Join RDR1 A1 ON A0.DocEntry = A1.DocEntry
 Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
 Inner Join OADM A3 On 1 = 1
 Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
 Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-Where DocStatus = 'O' --And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A1.BaseType &lt;&gt; '-1'
-Group By A2.LicTradNum, A1.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A4.U_SEICogn, A0.DocTotal, A0.PaidToDate, A0.CardName 
+Where A0.DocStatus = 'O'
 ) C0 Group By Cadena</value>
   </data>
   <data name="CarteraPSE1" xml:space="preserve">
     <value>Set @Valor =
 (
-	Select Sum(Valor) As Total from 
-		(
+	Select SUM(CAST(SUBSTRING(P0.Cadena,449,8) as numeric(16,2)))  As Total from 
+		(			
+			
+			Select C0.* From (
+			Select
+			'1' +
+			Convert(VARCHAR(8), GetDate(), 112) +
+			REPLICATE('0', 6 - DATALENGTH(LTRIM(@Conteo))) + LTRIM(@Conteo) +
+			REPLICATE('0', 18 - DATALENGTH(Replace(Cast(@Valor as numeric(16,2)),'.',''))) + Replace(Cast(@Valor as numeric(16,2)),'.','') +
+			@Consec +
+			Space(527) As Cadena, 0 As NumAtCard, 0 As DocEntry, 1 As Orden
+			)C0
+
+			Union All
+
+			Select C0.* from (
+			/*Cabecera Factura 00*/
+			Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+			CASE WHEN CHARINDEX('-', P0.NumAtCard) &gt; 0 THEN LEFT(P0.NumAtCard, CHARINDEX('-', P0.NumAtCard)-1) ELSE P0.NumAtCard  END as NumAtCard ,0 DocEntry, 2 As Orden
+			From (
 			Select
 			'2' +
 			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-			REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
 			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
-			Cast(A0.DocEntry As char(80)) +
-			Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			--Cast(A0.DocEntry As char(80)) +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
 			Cast('00' As Char(40)) + 
-			Cast(UPPER('COSTOS EDUCATIVOS '+
-			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(CONCAT (A4.U_SEINom,' ',A4.U_SEICogn),''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
 			'0' +
-			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1 ,
-			A0.DocTotal-IsNull(A0.PaidToDate,0) as Valor,
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+			CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) as INT) As Valor ,
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
@@ -1547,31 +1083,33 @@ Group By A2.LicTradNum, A1.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_Ety
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', A0.NumAtCard, A0.DocEntry, 2 As Orden
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard END as NumAtCard, A0.DocEntry, 2 As Orden
 			From ORDR A0
-			--Inner Join RDR1 A1 ON A0.DocEntry = A1.DocEntry
 			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
 			Inner Join OADM A3 On 1 = 1
 			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
 			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
 			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-			Where DocStatus = 'O' AND A4.U_SEI_PSE &lt;&gt; 'N' --And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.BaseType &lt;&gt; '-1'
+			Where A0.DocStatus = 'O' and A0.DocDate = '20161201' --and A4.Code = '2015080-0' 
 			Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A4.U_SEICogn, A0.DocTotal, A0.PaidToDate
+			) P0 
+			Group By P0.Cadena1, P0.cadena, P0.NumAtCard
 			Union All
 			/*Lineas Copceptos*/
-			Select 
+			Select --DISTINCT
 			'2' +
 			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-			REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
 			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
-			Cast(A1.DocEntry As char(80)) +
-			Cast(IsNull(A1.U_SEICAlum,'') As Char(80)) +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
 			Cast('01' As Char(40)) + 
 			Cast(UPPER(
 			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A6.ItemName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
 			'0' +
-			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1 ,
-			A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 As Valor,
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
+			REPLICATE('0', 16 - DATALENGTH(Replace(Cast(A1.LineTotal+ ISNULL((SELECT  T0.LineTotal FROM RDR1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.',''))) + Replace(Cast(A1.LineTotal+ISNULL((SELECT  T0.LineTotal FROM RDR1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.','') + '00' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
@@ -1579,7 +1117,7 @@ Group By A2.LicTradNum, A1.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_Ety
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', A0.NumAtCard, A1.DocEntry , 4 As Orden
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry , 3 As Orden
 			From ORDR A0
 			Inner Join RDR1 A1 ON A0.DocEntry = A1.DocEntry
 			Inner Join OITM A6 ON A1.ItemCode = A6.ItemCode 
@@ -1589,29 +1127,42 @@ Group By A2.LicTradNum, A1.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_Ety
 			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
 			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
 			Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc
-			Where DocStatus = 'O' AND A4.U_SEI_PSE &lt;&gt; 'N' --And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A1.BaseType &lt;&gt; '-1'
+			Where A0.DocStatus = 'O' and A0.DocDate = '20161201' --and A4.Code = '2015080-0' 
+
+			--) P0 
+			--Group By P0.Cadena1, P0.cadena, P0.NumAtCard
+
+
+			/*Lineas*/
+			)C0
+
 		)P0
 )
+
 Set @Conteo = 
 (
 	Select C0.Filas From 
 	(
 		Select Count(*) As Filas from 
 		(
+			Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+			CASE WHEN CHARINDEX('-', P0.NumAtCard) &gt; 0 THEN LEFT(P0.NumAtCard, CHARINDEX('-', P0.NumAtCard)-1) ELSE P0.NumAtCard  END as NumAtCard ,0 DocEntry, 2 As Orden
+			From (
 			Select
 			'2' +
 			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-			REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
 			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
-			Cast(A0.DocEntry As char(80)) +
-			Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+			--Cast(A0.DocEntry As char(80)) +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
 			Cast('00' As Char(40)) + 
-			Cast(UPPER('COSTOS EDUCATIVOS '+
-			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+			Cast(UPPER(
+			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(CONCAT (A4.U_SEINom,' ',A4.U_SEICogn),''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
 			'0' +
-			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-			REPLICATE('0', 18 - DATALENGTH(Replace(Cast((A0.DocTotal-IsNull(A0.PaidToDate,0)) as numeric(16,2)),'.',''))) + Replace(Cast((A0.DocTotal-IsNull(A0.PaidToDate,0)) as numeric(16,2)),'.','') +
+			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+			CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) as INT) As Valor ,
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
@@ -1619,30 +1170,33 @@ Set @Conteo =
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', A0.NumAtCard, A0.DocEntry, 2 As Orden
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard END as NumAtCard, A0.DocEntry, 2 As Orden
 			From ORDR A0
-			--Inner Join RDR1 A1 ON A0.DocEntry = A1.DocEntry
 			Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
 			Inner Join OADM A3 On 1 = 1
 			Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
 			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
 			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-			Where DocStatus = 'O' AND A4.U_SEI_PSE &lt;&gt; 'N' --And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A1.BaseType &lt;&gt; '-1'
+			Where A0.DocStatus = 'O' and A0.DocDate = '20161201' --and A4.Code = '2015080-0' 
+			Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A4.U_SEICogn, A0.DocTotal, A0.PaidToDate
+			) P0 
+			Group By P0.Cadena1, P0.cadena, P0.NumAtCard
 			Union All
 			/*Lineas Copceptos*/
-			Select 
+			Select --DISTINCT
 			'2' +
 			REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-			REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
+			CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
 			CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
-			Cast(A1.DocEntry As char(80)) +
-			Cast(IsNull(A1.U_SEICAlum,'') As Char(80)) +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+			--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
 			Cast('01' As Char(40)) + 
 			Cast(UPPER(
 			Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A6.ItemName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
 			'0' +
 			Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-			REPLICATE('0', 18 - DATALENGTH(Replace(Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)),'.',''))) + Replace(Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)),'.','') +
+			REPLICATE('0', 16 - DATALENGTH(Replace(Cast(A1.LineTotal+ ISNULL((SELECT  T0.LineTotal FROM RDR1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.',''))) + Replace(Cast(A1.LineTotal+ISNULL((SELECT  T0.LineTotal FROM RDR1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.','') + '00' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
@@ -1650,7 +1204,7 @@ Set @Conteo =
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 			REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', A0.NumAtCard, A1.DocEntry, 4 As Orden
+			REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry , 3 As Orden
 			From ORDR A0
 			Inner Join RDR1 A1 ON A0.DocEntry = A1.DocEntry
 			Inner Join OITM A6 ON A1.ItemCode = A6.ItemCode 
@@ -1660,11 +1214,21 @@ Set @Conteo =
 			Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
 			Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
 			Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc
-			Where DocStatus = 'O' AND A4.U_SEI_PSE &lt;&gt; 'N'--And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A1.BaseType &lt;&gt; '-1'
+			Where A0.DocStatus = 'O' and A0.DocDate = '20161201' --and A4.Code = '2015080-0' 
+
 		)P0
 	) C0
 )
+
+
+--------------------------------------------------------------------ARCHIVO-------------------------------------------------------------------------------------------------
+
+
+
 /*Cabecera Archivo*/
+
+
+
 Select T0.Cadena From (
 Select C0.* From (
 Select
@@ -1680,20 +1244,24 @@ Union All
 
 Select C0.* from (
 /*Cabecera Factura 00*/
+Select P0.Cadena1 + REPLICATE('0', 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.',''))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),'.','') + P0.Cadena As Cadena,
+CASE WHEN CHARINDEX('-', P0.NumAtCard) &gt; 0 THEN LEFT(P0.NumAtCard, CHARINDEX('-', P0.NumAtCard)-1) ELSE P0.NumAtCard  END as NumAtCard ,0 DocEntry, 2 As Orden
+From (
 Select
 '2' +
 REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
+CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
 CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
-Cast(A0.DocEntry As char(80)) +
-Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+--Cast(A0.DocEntry As char(80)) +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
 Cast('00' As Char(40)) + 
-Cast(UPPER('COSTOS EDUCATIVOS '+
-Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEINom,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u') + ' ' +
-Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A4.U_SEICogn,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
+Cast(UPPER(
+Replace(Replace(Replace(Replace(Replace(Replace(IsNull(CONCAT (A4.U_SEINom,' ',A4.U_SEICogn),''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
 '0' +
-Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-REPLICATE('0', 18 - DATALENGTH(Replace(Cast((A0.DocTotal-IsNull(A0.PaidToDate,0)) as numeric(16,2)),'.',''))) + Replace(Cast((A0.DocTotal-IsNull(A0.PaidToDate,0)) as numeric(16,2)),'.','') +
+Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) As Cadena1,
+CAST(A0.DocTotal-IsNull(A0.PaidToDate,0) as INT) As Valor ,
 REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
@@ -1701,31 +1269,33 @@ REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 REPLICATE('0', 8 - DATALENGTH('0')) + '0' + 
 REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', A0.NumAtCard, A0.DocEntry, 2 As Orden
+REPLICATE('0', 18 - DATALENGTH('0')) + '0'As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard END as NumAtCard, A0.DocEntry, 2 As Orden
 From ORDR A0
---Inner Join RDR1 A1 ON A0.DocEntry = A1.DocEntry
 Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
 Inner Join OADM A3 On 1 = 1
 Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
 Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
 Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-Where DocStatus = 'O' AND A4.U_SEI_PSE &lt;&gt; 'N' --And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A1.BaseType &lt;&gt; '-1'
+Where A0.DocStatus = 'O' and A0.DocDate = '20161201' --and A4.Code = '2015080-0' 
 Group By A2.LicTradNum, A0.DocEntry, A0.NumAtCard, A0.DocDate, A4.Name, A3.U_EtyCode, A10.Name, A4.U_SEInom, A4.U_SEICogn, A0.DocTotal, A0.PaidToDate
+) P0 
+Group By P0.Cadena1, P0.cadena, P0.NumAtCard
 Union All
 /*Lineas Copceptos*/
-Select 
+Select --DISTINCT
 '2' +
 REPLICATE('0', 35 - Len(IsNull(A3.U_EtyCode,''))) + IsNull(A3.U_EtyCode,'') + 
-REPLICATE('0', 35 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') + 
+CAST(REPLICATE('0', 29 - Len(IsNull(A10.Name,''))) + IsNull(A10.Name,'') as char (35)) + 
 CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
-Cast(A1.DocEntry As char(80)) +
-Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN Cast(LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) As char(80)) ELSE Cast(A0.NumAtCard As char(80)) END +
+--Cast(IsNull(A0.NumAtCard,'') As Char(80)) +
 Cast('01' As Char(40)) + 
 Cast(UPPER(
 Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A6.ItemName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u')) as Char(80)) +
 '0' +
 Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-REPLICATE('0', 18 - DATALENGTH(Replace(Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)),'.',''))) + Replace(Cast(A1.LineTotal-A1.LineTotal*IsNull(A11.U_SEIDesE,0)/100 as numeric(16,2)),'.','') +
+REPLICATE('0', 16 - DATALENGTH(Replace(Cast(A1.LineTotal+ ISNULL((SELECT  T0.LineTotal FROM RDR1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.',''))) + Replace(Cast(A1.LineTotal+ISNULL((SELECT  T0.LineTotal FROM RDR1 T0 WHERE T0.DocEntry = A0.DocEntry  and  T0.ItemCode = A6.U_SEI_ADE),0) as INT),'.','') + '00' +
 REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
@@ -1733,7 +1303,7 @@ REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
 REPLICATE('0', 18 - DATALENGTH('0')) + '0' +
 REPLICATE('0', 8 - DATALENGTH('0')) + '0' +
-REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', A0.NumAtCard, A1.DocEntry , 4 As Orden
+REPLICATE('0', 18 - DATALENGTH('0')) + '0' As 'Cadena', CASE WHEN CHARINDEX('-', A0.NumAtCard) &gt; 0 THEN LEFT(A0.NumAtCard, CHARINDEX('-', A0.NumAtCard)-1) ELSE A0.NumAtCard  END as NumAtCard, A0.DocEntry , 3 As Orden
 From ORDR A0
 Inner Join RDR1 A1 ON A0.DocEntry = A1.DocEntry
 Inner Join OITM A6 ON A1.ItemCode = A6.ItemCode 
@@ -1743,51 +1313,152 @@ Left Join [@SEI_ALUMNOS] A4 On A1.U_SEICAlum = A4.Code
 Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
 Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
 Left Join [@SEI_CONC_ALUMN] A11 On A0.NumAtCard = A11.Code And A1.ItemCode = A11.U_SEIConc
-Where DocStatus = 'O' AND A4.U_SEI_PSE &lt;&gt; 'N' --And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A1.BaseType &lt;&gt; '-1'
+Where A0.DocStatus = 'O' and A0.DocDate = '20161201' --and A4.Code = '2015080-0' 
+
+--) P0 
+--Group By P0.Cadena1, P0.cadena, P0.NumAtCard
+
+
+/*Lineas*/
 )C0
-)T0
-Where IsNull(Cadena,'') &lt;&gt; ''
-Order By T0.DocEntry, T0.Orden</value>
+)T0 Order By T0.NumAtCard,  T0.Orden</value>
   </data>
   <data name="UsuariosPSE" xml:space="preserve">
     <value>Select * from (
 Select
 CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
 '01' +
-Cast(IsNull(A0.NumAtCard,'') As Char(35)) +
+--Cast(IsNull(A0.NumAtCard,'') As Char(35)) +
+CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(35)) ELSE Cast(A2.LicTradNum As char(35)) END +
 '00' +
 Cast(UPPER(Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A0.CardName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u ') ) as Char(50)) +
 Space(50) As Cadena
 From OINV A0
-Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
 Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
 Inner Join OADM A3 On 1 = 1
 Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
 Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
-Left Join [@SEI_SRVCODE] A10 On A0.U_SEI_FACTU = A10.Code
-Where DocStatus = 'O' And (A0.DocTotal-IsNull(A0.PaidToDate,0)) &gt; 0 And A0.U_SEI_FACTU = '1' And 
-A0.DocEntry In (Select DocEntry From OINV Where Month(DocDate) = Month(GetDate()) /*And NumAtCard = '491'*/) And A1.TargetType != '14' 
-Group By A2.LicTradNum, A0.NumAtCard, A0.CardName
+Where A0.DocStatus = 'O' And (A0.DocTotal-A0.PaidToDate) &gt; 0 And A0.U_SEI_FACTU = '1'
 Union All
 Select
-CASE WHEN CHARINDEX('-', A8.LicTradNum) &gt; 0 THEN Cast(LEFT(A8.LicTradNum, CHARINDEX('-', A8.LicTradNum)-1) As char(80)) ELSE Cast(A8.LicTradNum As char(80)) END +
+CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
 '01' +
-Cast(IsNull(A2.NumAtCard,'') As Char(35)) +
+--Cast(IsNull(A0.NumAtCard,'') As Char(35)) +
+CASE WHEN CHARINDEX('-', A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX('-', A2.LicTradNum)-1) As char(35)) ELSE Cast(A2.LicTradNum As char(35)) END +
 '00' +
-Cast(UPPER(Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A8.CardName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u ') ) as Char(50)) +
+Cast(UPPER(Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A0.CardName,''),'ñ','n'), 'á', 'a'), 'é','e'), 'í', 'i'), 'ó', 'o'), 'ú','u ') ) as Char(50)) +
 Space(50) As Cadena
-From OJDT A0 
-Inner Join JDT1 A1 On A0.TransId = A1.TransId 
-Left Join OINV A2 On A0.Ref1 = A2.DocNum 
-Left Join RCT2 A3 On A0.TransId = A3.DocEntry And A0.ObjType = A3.InvType 
-Left Join ORCT A4 On A3.DocNum = A4.DocEntry 
-Left Join [@SEI_ALUMNOS] A5 On IsNull(A2.NumAtCard,'') = A5.Code
-Left Join [@SEI_CURSOS] A6 On A5.U_SEICurso = A6.Code
-Left Join [@SEI_SRVCODE] A7 On A2.U_SEI_FACTU = A7.Code
-Inner Join OCRD A8 ON A2.CardCode = A8.CardCode
-Left Join OADM A9 On 1 = 1
-Where A0.TransCode = 'INT' And A2.U_SEI_FACTU = '1' And IsNull(A0.StornoToTr,'') = '' And A1.BalDueDeb &gt; 0 /*And A0.Ref2 = '491' */
-Group By A8.LicTradNum, A2.NumAtCard, A8.CardName
+From OINV A0
+Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+Inner Join OADM A3 On 1 = 1
+Left Join [@SEI_ALUMNOS] A4 On IsNull(A0.NumAtCard,'')= A4.Code
+Left Join [@SEI_CURSOS] A5 On A4.U_SEICurso = A5.Code
+Left Join OJDT A7 On A0.DocNum = A7.Ref1
+Left Join JDT1 A8 On A7.TransId = A8.TransId
+Left Join RCT2 A9 On A7.TransId = A9.DocEntry And A7.ObjType = A9.InvType
+Where A0.DocStatus = 'O' And (IsNull(A8.Debit,0)-IsNull(A9.SumApplied,0)) &gt; 0 And A7.TransCode = 'INT' And A0.U_SEI_FACTU = '1'
 ) C0 Group By Cadena</value>
+  </data>
+  <data name="Bancolombia" xml:space="preserve">
+    <value>Set @Conteo = 
+(
+	Select C0.Filas From 
+	(
+		Select Count(*) As Filas from 
+		(
+			Select
+			'1' +
+			REPLICATE('0', 6 - Len(LTRIM(A2.BankCode))) + LTRIM(A2.BankCode) +
+			REPLICATE('0', 4 - Len(IsNull(A5.Street,''))) + IsNull(A5.Street,'') +
+			REPLICATE('0', 17 - Len(IsNull(A2.DflAccount,'0'))) + IsNull(A2.DflAccount,'0') +
+			Case when A2.DflIBAN = '01' Then '1' When A2.DflIBAN = '02' Then '2' Else '' End +
+			REPLICATE('0', 17 - DATALENGTH(Replace(Cast(IsNull(A1.SumApplied,'0') As Numeric(19,2)),'.',''))) + Replace(Cast(IsNull(A1.SumApplied,'0') As Numeric(19,2)),'.','') As Cadena
+			From OVPM A0
+			Left join VPM2 A1 On A0.DocEntry = A1.DocNum
+			Left Join OCRD A2 On A0.CardCode = A2.CardCode
+			Left Join OPYM A3 On A0.PayMth = A3.PayMethCod
+			Left Join DSC1 A5 On A0.TrsfrAcct = A5.GLAccount
+			Left Join [@BPCO_TD] A6 On A2.U_BPCO_TDC = A6.Code
+			Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And (A3.PayMethCod Like '%Trans%' Or A0.U_METOPAGO = 'Trans')
+		)P0
+	) C0
+)
+
+Set @Valor =
+(
+	Select Sum(Valor) As Total from 
+		(
+			Select
+			'1' +
+			REPLICATE('0', 6 - Len(LTRIM(A2.BankCode))) + LTRIM(A2.BankCode) +
+			REPLICATE('0', 4 - Len(IsNull(A5.Street,''))) + IsNull(A5.Street,'') +
+			Cast(IsNull(A2.DflAccount,'') As Char(17)) +
+			Case when A2.DflIBAN = '01' Then '1' When A2.DflIBAN = '02' Then '2' Else '' End As Cadena ,
+			A1.SumApplied As Valor
+			From OVPM A0
+			Left join VPM2 A1 On A0.DocEntry = A1.DocNum
+			Left Join OCRD A2 On A0.CardCode = A2.CardCode
+			Left Join OPYM A3 On A0.PayMth = A3.PayMethCod
+			Left Join DSC1 A5 On A0.TrsfrAcct = A5.GLAccount
+			Left Join [@BPCO_TD] A6 On A2.U_BPCO_TDC = A6.Code
+			Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And (A3.PayMethCod Like '%Trans%' Or A0.U_METOPAGO = 'Trans')
+		)P0
+)
+Select
+'0' + 
+'01' +
+'PPE' +
+Cast('2086' As Char(4)) +
+Cast('2086000000668' As Char(13)) +
+Cast('0000030013819' As Char(13)) +
+'570110' +
+REPLICATE('0', 4 - Len(IsNull(A3.Street,''))) + IsNull(A3.Street,'') +
+REPLICATE('0', 17 - Len(IsNull(A3.Account,''))) + IsNull(A3.Account,'') +
+Case When A3.IBAN = 'AHORROS' Then '2' When A3.IBAN = 'CORRIENTE' Then '1' Else '' End +
+REPLICATE('0', 6 - Len(LTRIM(@Conteo))) + LTRIM(@Conteo) +
+REPLICATE('0', 18 - DATALENGTH(Replace(Cast(@Valor as numeric(16,2)),'.',''))) + Replace(Cast(@Valor as numeric(16,2)),'.','') +
+Space(100) As Cadena
+From OVPM A0
+Left Join OPYM A1 On A0.PayMth = A1.PayMethCod
+Left Join ODSC A2 On A1.BnkDflt = A2.BankCode
+Left Join DSC1 A3 On A2.DfltActKey = A3.AbsEntry
+Left join OADM A4 On 1 = 1
+Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And (A1.PayMethCod Like '%Trans%' Or A0.U_METOPAGO = 'Trans')
+
+Union
+
+Select
+'1' +
+REPLICATE('0', 6 - Len(LTRIM(A2.BankCode))) + LTRIM(A2.BankCode) +
+REPLICATE('0', 4 - Len(IsNull(A5.Street,''))) + IsNull(A5.Street,'') +
+REPLICATE('0', 17 - Len(IsNull(A2.DflAccount,'0'))) + IsNull(A2.DflAccount,'0') +
+Case when A2.DflIBAN = '01' Then '1' When A2.DflIBAN = '02' Then '2' Else '' End +
+REPLICATE('0', 17 - DATALENGTH(Replace(Cast(IsNull(A1.SumApplied,'0') As Numeric(19,2)),'.',''))) + Replace(Cast(IsNull(A1.SumApplied,'0') As Numeric(19,2)),'.','') +
+REPLICATE('0', 6 - Len(LTRIM(@Conteo))) + LTRIM(@Conteo) 
+From OVPM A0
+Left join VPM2 A1 On A0.DocEntry = A1.DocNum
+Left Join OCRD A2 On A0.CardCode = A2.CardCode
+Left Join OPYM A3 On A0.PayMth = A3.PayMethCod
+Left Join DSC1 A5 On A0.TrsfrAcct = A5.GLAccount
+Left Join [@BPCO_TD] A6 On A2.U_BPCO_TDC = A6.Code
+Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And (A3.PayMethCod Like '%Trans%' Or A0.U_METOPAGO = 'Trans')
+
+Union
+
+Select
+'2' +
+Cast(IsNull(A1.DocEntry,'') As Char(17)) +
+'+' +
+REPLICATE('0', 17 - DATALENGTH(Replace(Cast(IsNull(A1.SumApplied,'0') As Numeric(19,2)),'.',''))) + Replace(Cast(IsNull(A1.SumApplied,'0') As Numeric(19,2)),'.','')+
+Case when A2.DflIBAN = '01' Then '1' When A2.DflIBAN = '02' Then '2' Else '' End +
+'-' +
+REPLICATE('0', 17 - DATALENGTH(Replace(Cast(IsNull(A1.DcntSum,'0') As Numeric(19,2)),'.',''))) + Replace(Cast(IsNull(A1.DcntSum,'0') As Numeric(19,2)),'.','')
+From OVPM A0
+Left join VPM2 A1 On A0.DocEntry = A1.DocNum
+Left Join OCRD A2 On A0.CardCode = A2.CardCode
+Left Join OPYM A3 On A0.PayMth = A3.PayMethCod
+Left Join DSC1 A5 On A0.TrsfrAcct = A5.GLAccount
+Left Join [@BPCO_TD] A6 On A2.U_BPCO_TDC = A6.Code
+Where A0.DocDate = @FechaArchivo And IsNull(A0.CheckSum,0) = 0 And IsNull(A0.CashSum,0) = 0 And (A3.PayMethCod Like '%Trans%' Or A0.U_METOPAGO = 'Trans')</value>
   </data>
 </root>

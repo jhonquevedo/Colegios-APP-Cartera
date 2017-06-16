@@ -8,7 +8,6 @@ Public Class MDIParentPin
     Public Shared idPagos2 As DataColumn = New DataColumn("ValorPago", Type.GetType("System.String"))
     Public Shared idPagos3 As DataColumn = New DataColumn("TipoFac", Type.GetType("System.String"))
     Public Shared idPagos4 As DataColumn = New DataColumn("NumFac", Type.GetType("System.String"))
-    Public Shared idPagos5 As DataColumn = New DataColumn("TipoEmpresa", Type.GetType("System.String"))
 
     Private Sub ShowNewForm(ByVal sender As Object, ByVal e As EventArgs)
         ' Create a new instance of the child form.
@@ -124,7 +123,11 @@ Public Class MDIParentPin
         dtPagos.Columns.Add(idPagos2)
         dtPagos.Columns.Add(idPagos3)
         dtPagos.Columns.Add(idPagos4)
-        dtPagos.Columns.Add(idPagos5)
         Return 0
     End Function
+
+    Private Sub NovedadesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles NovedadesToolStripMenuItem.Click
+        Novedades.MdiParent = Me
+        Novedades.Show()
+    End Sub
 End Class

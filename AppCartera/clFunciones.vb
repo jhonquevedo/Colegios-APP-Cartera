@@ -13,7 +13,7 @@ Public Class clFunciones
         Dim UserDB As String = My.Settings.UserDB
         Dim PassDb As String = My.Settings.PassDB
 
-        Cadena = "Data Source=" & Servidor & ";Network Library=DBMSSOCN;Initial Catalog=" & Base & ";User ID=" & UserDB & ";Password=" & PassDb & ";"
+        Cadena = "Data Source=" & Servidor & ",1433;Network Library=DBMSSOCN;Initial Catalog=" & Base & ";User ID=" & UserDB & ";Password=" & PassDb & ";"
         SetConectionSQL = New SqlConnection(Cadena)
         Return SetConectionSQL
     End Function

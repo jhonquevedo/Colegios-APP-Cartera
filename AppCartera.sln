@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "AppCartera", "AppCartera\AppCartera.vbproj", "{F2AC5947-2BE9-4A62-8B03-E595A7E5629D}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Instalador Colombo", "Instalador\Instalador.vdproj", "{B12919EC-9638-4D98-B8BD-2ABACB982C83}"
+EndProject
+Project("{6141683F-8A12-4E36-9623-2EB02B2C2303}") = "Setup1", "Setup1\Setup1.isproj", "{D969EA67-4D67-49DD-83C0-FB8332DEE962}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +26,21 @@ Global
 		{F2AC5947-2BE9-4A62-8B03-E595A7E5629D}.Release|x86.Build.0 = Release|x86
 		{F2AC5947-2BE9-4A62-8B03-E595A7E5629D}.SingleImage|x86.ActiveCfg = Release|x86
 		{F2AC5947-2BE9-4A62-8B03-E595A7E5629D}.SingleImage|x86.Build.0 = Release|x86
+		{B12919EC-9638-4D98-B8BD-2ABACB982C83}.CD_ROM|x86.ActiveCfg = Release
+		{B12919EC-9638-4D98-B8BD-2ABACB982C83}.Debug|x86.ActiveCfg = Debug
+		{B12919EC-9638-4D98-B8BD-2ABACB982C83}.DVD-5|x86.ActiveCfg = Debug
+		{B12919EC-9638-4D98-B8BD-2ABACB982C83}.Release|x86.ActiveCfg = Release
+		{B12919EC-9638-4D98-B8BD-2ABACB982C83}.SingleImage|x86.ActiveCfg = Release
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.CD_ROM|x86.ActiveCfg = CD_ROM
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.CD_ROM|x86.Build.0 = CD_ROM
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.Debug|x86.ActiveCfg = DVD-5
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.Debug|x86.Build.0 = DVD-5
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.DVD-5|x86.ActiveCfg = DVD-5
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.DVD-5|x86.Build.0 = DVD-5
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.Release|x86.ActiveCfg = SingleImage
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.Release|x86.Build.0 = SingleImage
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.SingleImage|x86.ActiveCfg = SingleImage
+		{D969EA67-4D67-49DD-83C0-FB8332DEE962}.SingleImage|x86.Build.0 = SingleImage
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

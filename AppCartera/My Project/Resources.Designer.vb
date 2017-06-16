@@ -61,17 +61,37 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Set @Valor =
+        '''  Looks up a localized string similar to Set @Conteo = 
         '''(
-        '''	Select Sum(LineTotal) As Total from 
+        '''	Select C0.Filas From 
+        '''	(
+        '''		Select Count(*) As Filas from 
         '''		(
-        '''			Select LineTotal,
-        '''			T1.Cadena1 + Cast(T0.TipoLin As Char(40)) + Cast(UPPER(T0.ItemName) as Char(80)) + &apos;0&apos; + Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-        '''			REPLICATE(&apos;0&apos;, 18 - DATALENGTH(Replace(Cast(T0.LineTotal as numeric(16,2)),&apos;.&apos;,&apos;&apos;))) + Replace(Cast(T0.LineTotal as numeric(16,2)),&apos;.&apos;,&apos;&apos;) +
-        '''			T1.Cadena2 As &apos;Cadena&apos;, T0.Alumno, T0.Orden
-        '''			From (
-        '''
-        '''			Select ItemName, Round(Sum(LineTotal),0) LineTotal, Alumno, &apos;00&apos; As  [rest of string was truncated]&quot;;.
+        '''			Select
+        '''			&apos;1&apos; +
+        '''			REPLICATE(&apos;0&apos;, 6 - Len(LTRIM(A2.BankCode))) + LTRIM(A2.BankCode) +
+        '''			REPLICATE(&apos;0&apos;, 4 - Len(IsNull(A5.Street,&apos;&apos;))) + IsNull(A5.Street,&apos;&apos;) +
+        '''			REPLICATE(&apos;0&apos;, 17 - Len(IsNull(A2.DflAccount,&apos;0&apos;))) + IsNull(A2.DflAccount,&apos;0&apos;) +
+        '''			Case when A2.DflIBAN = &apos;01&apos; Then &apos;1&apos; When A2.DflIBAN = &apos;02&apos; Then &apos;2&apos; Else &apos;&apos; End +
+        '''			REPLICATE(&apos;0&apos;, 17 - DATALENGTH(Replace(Cast(IsNull(A1.SumApplied,&apos;0&apos;) As Numeric(19 [rest of string was truncated]&quot;;.
+        '''</summary>
+        Friend ReadOnly Property Bancolombia() As String
+            Get
+                Return ResourceManager.GetString("Bancolombia", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Select
+        '''&apos;6&apos; + 
+        '''Case when A2.DflIBAN = &apos;01&apos; Then &apos;22&apos; When A2.DflIBAN = &apos;02&apos; Then &apos;32&apos; When A2.DflIBAN = &apos;03&apos; Then &apos;23&apos; When A2.DflIBAN = &apos;04&apos; Then &apos;33&apos; Else &apos;00&apos; End +
+        '''REPLICATE(&apos;0&apos;, 12 - DATALENGTH(Replace(Cast(sum(A1.SumApplied) As Numeric(19,2)),&apos;.&apos;,&apos;&apos;))) + Replace(Cast(sum(A1.SumApplied) As Numeric(19,2)),&apos;.&apos;,&apos;&apos;) +
+        '''Cast(IsNull(A2.DflAccount,&apos;&apos;) As Char(17)) +
+        '''&apos;000010320&apos; +
+        '''Cast(Replace(IsNull(A2.LicTradNum,&apos;&apos;), &apos;-&apos;, &apos;&apos;) As Char(15)) +
+        '''Cast(A2.CardName As Char (22))+
+        '''Cast(&apos;V&apos; As Char (2)) +
+        '''Space [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property CajaSocial() As String
             Get
@@ -82,15 +102,14 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to Set @Valor =
         '''(
-        '''	Select Sum(LineTotal) As Total from 
-        '''		(
-        '''			Select LineTotal,
-        '''			T1.Cadena1 + Cast(T0.TipoLin As Char(40)) + Cast(UPPER(T0.ItemName) as Char(80)) + &apos;0&apos; + Cast(Convert(VARCHAR(8), @FechaArchivo, 112) As char(8)) +
-        '''			REPLICATE(&apos;0&apos;, 18 - DATALENGTH(Replace(Cast(T0.LineTotal as numeric(16,2)),&apos;.&apos;,&apos;&apos;))) + Replace(Cast(T0.LineTotal as numeric(16,2)),&apos;.&apos;,&apos;&apos;) +
-        '''			T1.Cadena2 As &apos;Cadena&apos;, T0.Alumno, T0.Orden
-        '''			From (
-        '''
-        '''			Select ItemName, Round(Sum(LineTotal),0) LineTotal, Alumno, &apos;00&apos; As  [rest of string was truncated]&quot;;.
+        '''	Select SUM(CAST(SUBSTRING(P0.Cadena,449,8) as numeric(16,2)))  As Total from 
+        '''		(			
+        '''			
+        '''			Select C0.* from (
+        '''			/*Cabecera Factura 00*/
+        '''			Select P0.Cadena1 + REPLICATE(&apos;0&apos;, 18 - DATALENGTH(Replace(Cast(Sum(P0.Valor) as numeric(16,2)),&apos;.&apos;,&apos;&apos;))) + Replace(Cast(Sum(P0.Valor) as numeric(16,2)),&apos;.&apos;,&apos;&apos;) + P0.Cadena As Cadena,
+        '''			CASE WHEN CHARINDEX(&apos;-&apos;, P0.NumAtCard) &gt; 0 THEN LEFT(P0.NumAtCard, CHARINDEX(&apos;-&apos;, P0.NumAtCard)-1) ELSE P0.NumAtCard  END as NumAtCard ,0 DocEntry, 2 As Orden
+        ''' [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property CarteraPSE() As String
             Get
@@ -101,16 +120,22 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to Set @Valor =
         '''(
-        '''	Select Sum(Valor) As Total from 
-        '''		(
+        '''	Select SUM(CAST(SUBSTRING(P0.Cadena,449,8) as numeric(16,2)))  As Total from 
+        '''		(			
+        '''			
+        '''			Select C0.* From (
         '''			Select
-        '''			&apos;2&apos; +
-        '''			REPLICATE(&apos;0&apos;, 35 - Len(IsNull(A3.U_EtyCode,&apos;&apos;))) + IsNull(A3.U_EtyCode,&apos;&apos;) + 
-        '''			REPLICATE(&apos;0&apos;, 35 - Len(IsNull(A10.Name,&apos;&apos;))) + IsNull(A10.Name,&apos;&apos;) + 
-        '''			CASE WHEN CHARINDEX(&apos;-&apos;, A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX(&apos;-&apos;, A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
-        '''			Cast(A0.DocEntry As char(80)) +
-        '''			Cast(IsNull(A0.NumAtCard,&apos;&apos;) As Char(80)) +
-        '''			Cast(&apos;00&apos; As Char(40)) [rest of string was truncated]&quot;;.
+        '''			&apos;1&apos; +
+        '''			Convert(VARCHAR(8), GetDate(), 112) +
+        '''			REPLICATE(&apos;0&apos;, 6 - DATALENGTH(LTRIM(@Conteo))) + LTRIM(@Conteo) +
+        '''			REPLICATE(&apos;0&apos;, 18 - DATALENGTH(Replace(Cast(@Valor as numeric(16,2)),&apos;.&apos;,&apos;&apos;))) + Replace(Cast(@Valor as numeric(16,2)),&apos;.&apos;,&apos;&apos;) +
+        '''			@Consec +
+        '''			Space(527) As Cadena, 0 As NumAtCard, 0 As DocEntry, 1 As Orden
+        '''			)C0
+        '''
+        '''			Union All
+        '''
+        '''			Se [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property CarteraPSE1() As String
             Get
@@ -149,7 +174,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Set @Conteo =
+        '''  Looks up a localized string similar to Set @Conteo = 
         '''(
         '''	Select C0.Filas From 
         '''	(
@@ -159,7 +184,7 @@ Namespace My.Resources
         '''			REPLICATE(&apos;0&apos;, 5 - Len(Cast(Row_number() over (ORDER BY A1.DocEntry) + 1 As nvarchar(40)))) + Cast(Row_number() over (ORDER BY A1.DocEntry) + 1 As nvarchar(40)) As REGISTRO,
         '''			&apos;02&apos; As TIPO_REGISTRO,
         '''			REPLICATE(&apos;0&apos;, 12 - Len(IsNull(Cast(A2.DflAccount As Nvarchar(500)),&apos;0&apos;))) + IsNull(Cast(A2.DflAccount As Nvarchar(500)),&apos;0&apos;) As NUMERO_CUENTA,
-        '''			REPLICATE(&apos;0&apos;, 11 - Len(Replace(IsNull(A2.LicTradNum,&apos;&apos;), &apos;- [rest of string was truncated]&quot;;.
+        '''			REPLICATE(&apos;0&apos;, 11 - Len(Replace(IsNull(A2.LicTradNum,&apos;&apos;), &apos; [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property Colpatria() As String
             Get
@@ -172,13 +197,10 @@ Namespace My.Resources
         '''Select
         '''CASE WHEN CHARINDEX(&apos;-&apos;, A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX(&apos;-&apos;, A2.LicTradNum)-1) As char(80)) ELSE Cast(A2.LicTradNum As char(80)) END +
         '''&apos;01&apos; +
-        '''Cast(IsNull(A0.NumAtCard,&apos;&apos;) As Char(35)) +
+        '''--Cast(IsNull(A0.NumAtCard,&apos;&apos;) As Char(35)) +
+        '''CASE WHEN CHARINDEX(&apos;-&apos;, A2.LicTradNum) &gt; 0 THEN Cast(LEFT(A2.LicTradNum, CHARINDEX(&apos;-&apos;, A2.LicTradNum)-1) As char(35)) ELSE Cast(A2.LicTradNum As char(35)) END +
         '''&apos;00&apos; +
-        '''Cast(UPPER(Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A0.CardName,&apos;&apos;),&apos;ñ&apos;,&apos;n&apos;), &apos;á&apos;, &apos;a&apos;), &apos;é&apos;,&apos;e&apos;), &apos;í&apos;, &apos;i&apos;), &apos;ó&apos;, &apos;o&apos;), &apos;ú&apos;,&apos;u &apos;) ) as Char(50)) +
-        '''Space(50) As Cadena
-        '''From OINV A0
-        '''Inner Join INV1 A1 On A0.DocEntry = A1.DocEntry
-        '''Inner Join OCRD [rest of string was truncated]&quot;;.
+        '''Cast(UPPER(Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A0.CardName,&apos;&apos;),&apos;ñ&apos;,&apos;n&apos;), &apos;á&apos;, [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property UsuariosPSE() As String
             Get
@@ -196,8 +218,8 @@ Namespace My.Resources
         '''Cast(UPPER(Replace(Replace(Replace(Replace(Replace(Replace(IsNull(A0.CardName,&apos;&apos;),&apos;ñ&apos;,&apos;n&apos;), &apos;á&apos;, &apos;a&apos;), &apos;é&apos;,&apos;e&apos;), &apos;í&apos;, &apos;i&apos;), &apos;ó&apos;, &apos;o&apos;), &apos;ú&apos;,&apos;u &apos;) ) as Char(50)) +
         '''Space(50) As Cadena
         '''From ORDR A0
-        '''Inner Join RDR1 A1 ON A0.DocEntry = A1.DocEntry
-        '''Inner Join OCRD [rest of string was truncated]&quot;;.
+        '''Inner Join OCRD A2 ON A0.CardCode = A2.CardCode
+        '''Inner Join OADM [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property UsuariosPSE1() As String
             Get

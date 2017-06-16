@@ -173,13 +173,10 @@ Public Class LoginForm1
 
 
         i = oCompany.Connect()
-        Dim lRetCode, lErrCode As Long
-        Dim sErrMsg As String
+
         If i = 0 Then
             Return True
         Else
-            oCompany.GetLastError(lErrCode, sErrMsg)
-            MsgBox("Error al conectar: " & sErrMsg)
             Return False
         End If
     End Function

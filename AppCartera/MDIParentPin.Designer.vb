@@ -27,6 +27,7 @@ Partial Class MDIParentPin
         Me.ToolsMenu = New System.Windows.Forms.ToolStripMenuItem()
         Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PagosBancosToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.NovedadesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpMenu = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator8 = New System.Windows.Forms.ToolStripSeparator()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -43,13 +44,13 @@ Partial Class MDIParentPin
         Me.MenuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolsMenu, Me.HelpMenu})
         Me.MenuStrip.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip.Name = "MenuStrip"
-        Me.MenuStrip.Size = New System.Drawing.Size(763, 24)
+        Me.MenuStrip.Size = New System.Drawing.Size(746, 24)
         Me.MenuStrip.TabIndex = 5
         Me.MenuStrip.Text = "MenuStrip"
         '
         'ToolsMenu
         '
-        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OptionsToolStripMenuItem, Me.PagosBancosToolStripMenuItem})
+        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OptionsToolStripMenuItem, Me.PagosBancosToolStripMenuItem, Me.NovedadesToolStripMenuItem})
         Me.ToolsMenu.Name = "ToolsMenu"
         Me.ToolsMenu.Size = New System.Drawing.Size(90, 20)
         Me.ToolsMenu.Text = "&Herramientas"
@@ -65,6 +66,12 @@ Partial Class MDIParentPin
         Me.PagosBancosToolStripMenuItem.Name = "PagosBancosToolStripMenuItem"
         Me.PagosBancosToolStripMenuItem.Size = New System.Drawing.Size(183, 22)
         Me.PagosBancosToolStripMenuItem.Text = "&Pagos Bancos"
+        '
+        'NovedadesToolStripMenuItem
+        '
+        Me.NovedadesToolStripMenuItem.Name = "NovedadesToolStripMenuItem"
+        Me.NovedadesToolStripMenuItem.Size = New System.Drawing.Size(183, 22)
+        Me.NovedadesToolStripMenuItem.Text = "&Novedades"
         '
         'HelpMenu
         '
@@ -87,9 +94,9 @@ Partial Class MDIParentPin
         'StatusStrip
         '
         Me.StatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStatusVersion, Me.StatusLabelSoc, Me.StatusLabelUser})
-        Me.StatusStrip.Location = New System.Drawing.Point(0, 580)
+        Me.StatusStrip.Location = New System.Drawing.Point(0, 558)
         Me.StatusStrip.Name = "StatusStrip"
-        Me.StatusStrip.Size = New System.Drawing.Size(763, 22)
+        Me.StatusStrip.Size = New System.Drawing.Size(746, 22)
         Me.StatusStrip.TabIndex = 7
         Me.StatusStrip.Text = "StatusStrip"
         '
@@ -115,7 +122,7 @@ Partial Class MDIParentPin
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(763, 602)
+        Me.ClientSize = New System.Drawing.Size(746, 580)
         Me.Controls.Add(Me.MenuStrip)
         Me.Controls.Add(Me.StatusStrip)
         Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -125,7 +132,7 @@ Partial Class MDIParentPin
         Me.MinimizeBox = False
         Me.Name = "MDIParentPin"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Procesamiento de archivos 20170425"
+        Me.Text = "Procesamiento de archivos 20170322"
         Me.MenuStrip.ResumeLayout(False)
         Me.MenuStrip.PerformLayout()
         Me.StatusStrip.ResumeLayout(False)
@@ -145,5 +152,6 @@ Partial Class MDIParentPin
     Friend WithEvents PagosBancosToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents StatusLabelSoc As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents StatusLabelUser As System.Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents NovedadesToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 
 End Class
